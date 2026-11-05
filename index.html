@@ -13,7 +13,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='7' y='2' width='18' height='28' rx='5' fill='%2397A88F'/%3E%3Crect x='10' y='8' width='2.5' height='8' rx='1.2' fill='%23F4EEE3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat&family=JetBrains+Mono:wght@400;500&family=Onest:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat&family=JetBrains+Mono:wght@400;500&family=Onest:wght@400;500;800&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="assets/kitchen.jpg">
 <style>
 :root {
@@ -24,6 +24,7 @@
   --mono: "JetBrains Mono", ui-monospace, monospace;
   --hand: "Caveat", cursive;
   --ease: cubic-bezier(.6, .05, .25, 1);
+  --cam: 1s cubic-bezier(.65, 0, .25, 1);
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
@@ -54,17 +55,16 @@ button { font: inherit; color: inherit; }
   height: calc(var(--w) * 9 / 16);
   background: url(assets/kitchen.jpg) 0 0 / 100% 100% no-repeat;
   perspective: calc(2600 * var(--u));
-  transform-origin: calc(905 * var(--u)) calc(395 * var(--u));
-  transition: transform .9s cubic-bezier(.55, 0, .7, .2);
+  transform-origin: 0 0;
+  transition: transform var(--cam);
 }
-.is-zoom .scene { transform: scale(5.5); }
 
 .cavity, .glow, .floor-light, .door { position: absolute; }
 .cavity {
   left: calc(744 * var(--u)); top: calc(98 * var(--u));
   width: calc(322 * var(--u)); height: calc(594 * var(--u));
   border-radius: calc(36 * var(--u)) calc(36 * var(--u)) calc(10 * var(--u)) calc(10 * var(--u));
-  background: url(assets/cavity.jpg) center / cover;
+  background: #DAD0BF; overflow: hidden;
   opacity: 0; transition: opacity .2s;
 }
 .glow {
@@ -218,28 +218,59 @@ button { font: inherit; color: inherit; }
   .lead, .wall-links { display: none; }
 }
 
-/* Полотно резюме */
+/* Внутри холодильника: та же картинка, что в камере, только камера подъехала */
+.mini { position: absolute; left: 0; top: 0; transform-origin: 0 0; pointer-events: none; }
 .resume {
-  position: fixed; inset: 0; z-index: 10; overflow-y: auto; overscroll-behavior: contain;
-  background: radial-gradient(ellipse 60% 320px at 50% 0, rgba(255, 233, 184, .7), rgba(255, 233, 184, 0)) no-repeat, var(--paper);
-  opacity: 0; visibility: hidden; transition: opacity .6s .35s, visibility 0s 1s;
-  outline: none;
+  position: fixed; left: 0; top: 0; z-index: 10; width: 100vw; height: 100svh;
+  overflow: hidden; overscroll-behavior: contain; background: var(--paper);
+  transform-origin: 0 0; visibility: hidden; outline: none;
+  transition: transform var(--cam), border-radius var(--cam);
 }
-.resume.show { opacity: 1; visibility: visible; transition: opacity .6s .35s, visibility 0s; }
-.resume.leaving { transition: opacity .35s, visibility 0s .35s; }
-.r-top { display: flex; justify-content: space-between; align-items: center; max-width: 1216px; margin: 0 auto; padding: 28px 24px; font: 400 13px/1 var(--mono); }
-.r-top button { background: none; border: 0; padding: 8px 0; cursor: pointer; opacity: .75; }
-.r-top button:hover { opacity: 1; }
-.r-top span { opacity: .5; }
-.r-wrap { max-width: 880px; margin: 0 auto; padding: 56px 24px 120px; }
-.r-wrap > * { opacity: 0; translate: 0 14px; transition: opacity .6s, translate .6s var(--ease); }
-.resume.show .r-wrap > * { opacity: 1; translate: none; }
-.resume.show .r-wrap > :nth-child(2) { transition-delay: .55s; }
-.resume.show .r-wrap > :nth-child(3) { transition-delay: .62s; }
-.resume.show .r-wrap > :nth-child(n+4) { transition-delay: .7s; }
+.resume.show { visibility: visible; }
+.resume.ready { overflow-y: auto; }
+.r-top { position: sticky; top: 0; z-index: 3; height: 0; opacity: 0; transition: opacity .4s; }
+.resume.ready .r-top { opacity: 1; }
+.r-bar { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; font: 400 13px/1 var(--mono); }
+.r-bar button#closeFridge, .r-right { background: rgba(250, 245, 236, .86); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-radius: 999px; }
+.r-bar button#closeFridge { border: 0; padding: 10px 14px; cursor: pointer; white-space: nowrap; }
+.r-right { display: flex; align-items: center; gap: 10px; padding: 4px 4px 4px 14px; }
+.r-right span { opacity: .55; }
+@media (max-width: 520px) { .r-right { padding-left: 4px; } .r-right span { display: none; } }
+.lamp-bay {
+  display: grid; place-items: center; text-align: center;
+  min-height: clamp(600px, 42.86vw, 768px); padding: 96px 24px 15%;
+  background: #DAD0BF url(assets/lamp.jpg) center bottom / cover no-repeat;
+}
+.lamp-in { max-width: 700px; }
+.lamp-in h2 { font-weight: 500; font-size: clamp(40px, 5.4vw, 72px); line-height: 1; letter-spacing: -.045em; margin: 10px 0 16px; }
+.lamp-in p.about { font-size: clamp(15px, 1.35vw, 19px); line-height: 1.5; opacity: .82; margin: 0 0 22px; }
+.lamp-in .btns { justify-content: center; }
+.bay { position: relative; overflow: hidden; background: #DAD0BF; }
+.bay-in {
+  position: relative; left: 50%; translate: -50% 0; container-type: inline-size;
+  width: clamp(896px, 100vw, 1792px); aspect-ratio: 1792 / 768;
+  background: url(assets/shelf.jpg) 0 0 / 100% 100% no-repeat;
+}
+.gable, .print { position: absolute; mix-blend-mode: multiply; }
+.gable { top: 11.2%; height: 9.8%; width: 16%; background: var(--c); clip-path: polygon(6% 0, 97% 0, 100% 100%, 0 100%); }
+.print { top: 20.9%; width: 15.9%; height: 68.7%; display: flex; flex-direction: column; color: #1D1A16; overflow: hidden; }
+.g1, .front { left: 30.35%; }
+.g2, .facts { left: 52.5%; }
+.front .block { flex: 0 0 58%; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.2cqw; background: var(--c); color: #FFF; }
+.front .block b { font: 800 var(--fs)/1 "Onest", sans-serif; letter-spacing: -.03em; }
+.front .block i { font: 500 1.3cqw/1.2 "Onest", sans-serif; margin-top: .3cqw; }
+.front .low { flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 1.1cqw 1.2cqw; }
+.front .low b { font: 800 1.75cqw/1.1 "Onest", sans-serif; letter-spacing: -.02em; color: var(--c); }
+.front .low span { font: 500 1.12cqw/1.35 var(--mono); }
+.facts { padding: .9cqw; }
+.nf { flex: 1; display: flex; flex-direction: column; border: .17cqw solid; padding: .6cqw .8cqw; }
+.nf h4 { font: 800 1.62cqw/1.05 "Onest", sans-serif; letter-spacing: -.02em; margin: 0; }
+.nf .srv { font: 500 1.15cqw/1.3 "Onest", sans-serif; padding: .3cqw 0 .5cqw; border-bottom: .6cqw solid; }
+.nf .fr { display: flex; justify-content: space-between; align-items: baseline; gap: .6cqw; padding: .5cqw 0; border-bottom: .09cqw solid; font: 500 1.22cqw/1.2 "Onest", sans-serif; }
+.nf .fr b { font-weight: 800; white-space: nowrap; }
+.nf small { margin-top: auto; font: 500 1cqw/1.25 var(--mono); }
+.r-wrap { max-width: 880px; margin: 0 auto; padding: 72px 24px 120px; }
 .label { font: 500 12px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; }
-.r-hero h2 { font-weight: 500; font-size: clamp(44px, 7vw, 72px); line-height: 1; letter-spacing: -.045em; margin: 18px 0 20px; }
-.r-hero p { font-size: clamp(18px, 2.2vw, 22px); line-height: 1.5; opacity: .82; max-width: 720px; margin: 0 0 28px; }
 .btns { display: flex; flex-wrap: wrap; gap: 10px; }
 .btn {
   display: inline-flex; align-items: center; gap: 6px; padding: 12px 22px; border-radius: 999px;
@@ -386,59 +417,57 @@ dialog.project[open] { animation: pop .35s var(--ease); }
 
 <section class="resume" id="resume" tabindex="-1" data-i18n-aria="resume">
   <div class="r-top">
-    <button id="closeFridge" data-i18n="close"></button>
-    <div class="r-right"><span>artem.pet</span><div class="lang" role="group" data-i18n-aria="ariaLang"><button data-lang="ru">RU</button><button data-lang="en">EN</button></div></div>
+    <div class="r-bar">
+      <button id="closeFridge" data-i18n="close"></button>
+      <div class="r-right"><span>artem.pet</span><div class="lang" role="group" data-i18n-aria="ariaLang"><button data-lang="ru">RU</button><button data-lang="en">EN</button></div></div>
+    </div>
   </div>
-  <div class="r-wrap">
-    <header class="r-hero">
-      <p class="label" data-i18n="resume"></p>
-      <h2 data-i18n="name"></h2>
-      <p data-text="about"></p>
-      <div class="btns">
-        <a class="btn primary" data-link="pdf" download data-i18n="pdfButton"></a>
-        <a class="btn" data-link="hh" target="_blank" rel="noopener">hh.ru</a>
-        <a class="btn" data-link="linkedin" target="_blank" rel="noopener">LinkedIn</a>
-        <a class="btn" data-link="telegram" target="_blank" rel="noopener">Telegram</a>
+  <div id="rBody">
+    <header class="lamp-bay">
+      <div class="lamp-in">
+        <p class="label" data-i18n="resume"></p>
+        <h2 data-i18n="name"></h2>
+        <p class="about" data-text="about"></p>
+        <div class="btns">
+          <a class="btn primary" data-link="pdf" download data-i18n="pdfButton"></a>
+          <a class="btn" data-link="hh" target="_blank" rel="noopener">hh.ru</a>
+          <a class="btn" data-link="linkedin" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="btn" data-link="telegram" target="_blank" rel="noopener">Telegram</a>
+        </div>
       </div>
     </header>
+    <div id="shelves"></div>
+    <div class="r-wrap">
+      <section class="r-sec">
+        <h3 data-i18n="projects"></h3>
+        <div class="projects">
+          <button class="proj" data-action="project:smelo"><b>Smelo ↗</b><span data-text="smeloShort"></span><small data-i18n="projMeta"></small></button>
+          <button class="proj" data-action="project:max"><b>Max ↗</b><span data-text="maxShort"></span><small data-i18n="projMeta"></small></button>
+        </div>
+      </section>
 
-    <div class="shelf"></div>
-    <section class="r-sec">
-      <h3 data-i18n="experience"></h3>
-      <div id="jobs"></div>
-    </section>
+      <div class="shelf"></div>
+      <section class="r-sec">
+        <h3 data-i18n="skills"></h3>
+        <ul class="chips" id="skills"></ul>
+      </section>
 
-    <div class="shelf"></div>
-    <section class="r-sec">
-      <h3 data-i18n="projects"></h3>
-      <div class="projects">
-        <button class="proj" data-action="project:smelo"><b>Smelo ↗</b><span data-text="smeloShort"></span><small data-i18n="projMeta"></small></button>
-        <button class="proj" data-action="project:max"><b>Max ↗</b><span data-text="maxShort"></span><small data-i18n="projMeta"></small></button>
-      </div>
-    </section>
+      <div class="shelf"></div>
+      <section class="r-sec">
+        <h3 data-i18n="education"></h3>
+        <div id="education"></div>
+      </section>
 
-    <div class="shelf"></div>
-    <section class="r-sec">
-      <h3 data-i18n="skills"></h3>
-      <ul class="chips" id="skills"></ul>
-    </section>
-
-    <div class="shelf"></div>
-    <section class="r-sec">
-      <h3 data-i18n="education"></h3>
-      <div id="education"></div>
-    </section>
-
-    <div class="shelf"></div>
-    <section class="r-sec">
-      <h3 data-i18n="contacts"></h3>
-      <ul class="contacts">
-        <li><span>Telegram</span><a data-link="telegram" data-show="telegram" target="_blank" rel="noopener"></a></li>
-        <li><span>LinkedIn</span><a data-link="linkedin" data-show="linkedin" target="_blank" rel="noopener"></a></li>
-        <li><span>hh.ru</span><a data-link="hh" data-show="hh" target="_blank" rel="noopener"></a></li>
-      </ul>
-    </section>
-    <div class="shelf"></div>
+      <div class="shelf"></div>
+      <section class="r-sec">
+        <h3 data-i18n="contacts"></h3>
+        <ul class="contacts">
+          <li><span>Telegram</span><a data-link="telegram" data-show="telegram" target="_blank" rel="noopener"></a></li>
+          <li><span>LinkedIn</span><a data-link="linkedin" data-show="linkedin" target="_blank" rel="noopener"></a></li>
+          <li><span>hh.ru</span><a data-link="hh" data-show="hh" target="_blank" rel="noopener"></a></li>
+        </ul>
+      </section>
+    </div>
   </div>
 </section>
 
@@ -489,7 +518,7 @@ const CONTENT = {
     ui: {
       name: "Артём Петров", hint: "Открой холодильник: внутри резюме. Магниты кликаются", close: "← закрыть холодильник",
       resume: "Резюме", experience: "Опыт", projects: "Проекты", skills: "Навыки", education: "Образование", contacts: "Контакты",
-      pdfLink: "Резюме PDF ↓", pdfButton: "Скачать PDF", projMeta: "бот · макеты", role: "Моя роль", openBot: "Открыть бота", allMockups: "Все макеты в Figma",
+      pdfLink: "Резюме PDF ↓", pdfButton: "Скачать PDF", projMeta: "бот · макеты", role: "Моя роль", factsTitle: "Пищевая ценность", factsFoot: "* суточная норма не установлена", openBot: "Открыть бота", allMockups: "Все макеты в Figma",
       tipSmelo: "Smelo · проект", tipMax: "Max · проект", caption: "это я",
       note: "Дела<br><s>запустить Smelo</s><br><s>запустить Max</s><br>найти команду",
       openFridge: "Открыть холодильник: внутри резюме", ariaSmelo: "Проект Smelo", ariaMax: "Проект Max", ariaPhoto: "Фото", ariaNote: "Записка: запустить Smelo, запустить Max, найти команду", ariaPdf: "Скачать резюме PDF", ariaClose: "Закрыть", ariaLang: "Язык",
@@ -501,11 +530,11 @@ const CONTENT = {
       maxShort: "Разговорный английский в Telegram с персонажем Максом",
     },
     jobs: [
-      { years: "2024 - 2026", title: "Ewa languages · Product Lead", text: "Выстроил конвейер экспериментов: 80+ A/B-тестов за 2 года, retention второй недели +5 п.п. Вырастил юнит Words с 2% до 15% WAU за счёт интервального повторения и экосистемной стратегии. Внедрил LLM-пайплайн автогенерации упражнений и адаптации книг. Вёл команду разработки, 2 контент-продактов и 10 методистов, отвечал за Discovery и Delivery." },
-      { years: "2022 - 2023", title: "Uchi.ru · Product Manager", text: "Руководил двумя продуктовыми командами, около 20 человек, отвечал за стратегию core-сервисов. NSM +15% после редизайна флоу домашних заданий, WAU +10% и рост продаж курсов после обновления страницы курса, ARPU +10 п.п. за счёт нового формата обучения математике." },
-      { years: "2020 - 2022", title: "VK · Product Manager", text: "Platform и Content Cluster. Запустил 2 образовательных продукта от гипотезы до рынка и закрыл полугодовой OKR по EBITDA. Конверсия из визита в регистрацию +20%, в покупку +10 п.п., completion rate +5 п.п., SLA по домашним заданиям +15%." },
-      { years: "2019 - 2020", title: "Авито · Project Manager", text: "Недвижимость. Геймификационная кампания для роста CTR и качества объявлений, гео-модель для работы sales-команды с клиентами, подключение нового сегмента и рост выручки направления." },
-      { years: "2018 - 2020", title: "MAXIMUM Education · Market Analyst", text: "Исследовал EdTech-рынки 5 стран и готовил стратегию выхода в LATAM и Азию. До этого 200+ lead-gen мероприятий и 30+ публичных выступлений об образовательных инновациях." },
+      { color: "#5B5BD6", fs: "4.4cqw", name: "Ewa", sub: "languages", role: "Product Lead", net: "Нетто 2 г 4 мес", best: "Годен: 01.2024 - 04.2026", serving: "На 2 года работы", facts: [["A/B-тесты", "80+"], ["Retention W2", "+5 п.п."], ["Юнит Words, WAU", "2→15%"], ["Контент-продакты", "2"], ["Методисты", "10"]], text: "Выстроил конвейер экспериментов: 80+ A/B-тестов за 2 года, retention второй недели +5 п.п. Вырастил юнит Words с 2% до 15% WAU за счёт интервального повторения и экосистемной стратегии. Внедрил LLM-пайплайн автогенерации упражнений и адаптации книг. Вёл команду разработки, 2 контент-продактов и 10 методистов, отвечал за Discovery и Delivery." },
+      { color: "#D9701F", fs: "3.2cqw", name: "Uchi.ru", sub: "", role: "Product Manager", net: "Нетто 2 года", best: "Годен: 01.2022 - 12.2023", serving: "На 2 года работы", facts: [["Команды", "2"], ["Людей в них", "~20"], ["NSM", "+15%"], ["WAU", "+10%"], ["ARPU", "+10 п.п."]], text: "Руководил двумя продуктовыми командами, около 20 человек, отвечал за стратегию core-сервисов. NSM +15% после редизайна флоу домашних заданий, WAU +10% и рост продаж курсов после обновления страницы курса, ARPU +10 п.п. за счёт нового формата обучения математике." },
+      { color: "#2B6CD6", fs: "4.4cqw", name: "VK", sub: "", role: "Product Manager", net: "Нетто 1 г 3 мес", best: "Годен: 12.2020 - 01.2022", serving: "На 1 год 3 мес", facts: [["Продукты с нуля", "2"], ["Визит → регистрация", "+20%"], ["Визит → покупка", "+10 п.п."], ["Completion rate", "+5 п.п."], ["SLA по ДЗ", "+15%"]], text: "Platform и Content Cluster. Запустил 2 образовательных продукта от гипотезы до рынка и закрыл полугодовой OKR по EBITDA. Конверсия из визита в регистрацию +20%, в покупку +10 п.п., completion rate +5 п.п., SLA по домашним заданиям +15%." },
+      { color: "#1E9E58", fs: "3.4cqw", name: "Авито", sub: "", role: "Project Manager", net: "Нетто 1 г 5 мес", best: "Годен: 07.2019 - 11.2020", serving: "На 1 год 5 мес", facts: [["Classifieds в анализе", "20"], ["CTR объявлений", "рост"], ["Выручка направления", "рост"], ["Гео-модель для sales", "1"]], text: "Недвижимость. Геймификационная кампания для роста CTR и качества объявлений, гео-модель для работы sales-команды с клиентами, подключение нового сегмента и рост выручки направления." },
+      { color: "#C23B3B", fs: "2.5cqw", name: "MAXIMUM", sub: "Education", role: "Market Analyst", net: "Нетто 1 г 4 мес", best: "Годен: 11.2018 - 02.2020", serving: "На 1 год 4 мес", facts: [["Рынки", "5 стран"], ["Мероприятия", "200+"], ["Конверсия в визит", "+10%"], ["Выступления", "30+"], ["Лекторы", "5"]], text: "Исследовал EdTech-рынки 5 стран и готовил стратегию выхода в LATAM и Азию. До этого 200+ lead-gen мероприятий и 30+ публичных выступлений об образовательных инновациях." },
     ],
     skills: ["Product Management", "Retention и подписки", "A/B-тесты", "Discovery и интервью", "Юнит-экономика", "SQL", "Amplitude", "Python", "Figma", "LLM и AI-пайплайны", "Управление командами", "Английский C1"],
     education: [
@@ -531,7 +560,7 @@ const CONTENT = {
     ui: {
       name: "Artem Petrov", hint: "Open the fridge: the resume is inside. Magnets are clickable", close: "← close the fridge",
       resume: "Resume", experience: "Experience", projects: "Projects", skills: "Skills", education: "Education", contacts: "Contacts",
-      pdfLink: "Resume PDF ↓", pdfButton: "Download PDF", projMeta: "bot · mockups", role: "My role", openBot: "Open the bot", allMockups: "All mockups in Figma",
+      pdfLink: "Resume PDF ↓", pdfButton: "Download PDF", projMeta: "bot · mockups", role: "My role", factsTitle: "Nutrition Facts", factsFoot: "* daily value not established", openBot: "Open the bot", allMockups: "All mockups in Figma",
       tipSmelo: "Smelo · project", tipMax: "Max · project", caption: "that's me",
       note: "To do<br><s>launch Smelo</s><br><s>launch Max</s><br>find a team",
       openFridge: "Open the fridge: the resume is inside", ariaSmelo: "Smelo project", ariaMax: "Max project", ariaPhoto: "Photo", ariaNote: "Note: launch Smelo, launch Max, find a team", ariaPdf: "Download resume PDF", ariaClose: "Close", ariaLang: "Language",
@@ -543,11 +572,11 @@ const CONTENT = {
       maxShort: "Conversational English in Telegram with a character named Max",
     },
     jobs: [
-      { years: "2024 - 2026", title: "Ewa languages · Product Lead", text: "Built a continuous experimentation pipeline: 80+ A/B tests in 2 years, second-week retention +5 pp. Grew the Words unit from 2% to 15% of WAU through spaced repetition and an ecosystem strategy. Shipped an LLM pipeline that generates exercises and adapts books. Led a development team, 2 content product managers and 10 methodologists, owning Discovery and Delivery." },
-      { years: "2022 - 2023", title: "Uchi.ru · Product Manager", text: "Led two product teams, about 20 people, and owned the strategy for core services. NSM +15% after redesigning the homework flow, WAU +10% and higher course sales after updating the course page, ARPU +10 pp from a new math learning format." },
-      { years: "2020 - 2022", title: "VK · Product Manager", text: "Platform and Content Cluster. Launched 2 educational products from hypothesis to market and hit the half-year EBITDA OKR. Visit-to-signup conversion +20%, visit-to-purchase +10 pp, completion rate +5 pp, homework SLA +15%." },
-      { years: "2019 - 2020", title: "Avito · Project Manager", text: "Real Estate. A gamification campaign to raise listing CTR and quality, a geo model for how the sales team works with clients, and a new segment that grew the line's revenue." },
-      { years: "2018 - 2020", title: "MAXIMUM Education · Market Analyst", text: "Researched EdTech markets in 5 countries and prepared the strategy for entering LATAM and Asia. Before that, 200+ lead-gen events and 30+ public talks on education innovation." },
+      { color: "#5B5BD6", fs: "4.4cqw", name: "Ewa", sub: "languages", role: "Product Lead", net: "Net 2 yrs 4 mos", best: "Best by 01/2024 - 04/2026", serving: "Per 2 years of work", facts: [["A/B tests", "80+"], ["Week 2 retention", "+5 pp"], ["Words unit, WAU", "2→15%"], ["Content PMs", "2"], ["Methodologists", "10"]], text: "Built a continuous experimentation pipeline: 80+ A/B tests in 2 years, second-week retention +5 pp. Grew the Words unit from 2% to 15% of WAU through spaced repetition and an ecosystem strategy. Shipped an LLM pipeline that generates exercises and adapts books. Led a development team, 2 content product managers and 10 methodologists, owning Discovery and Delivery." },
+      { color: "#D9701F", fs: "3.2cqw", name: "Uchi.ru", sub: "", role: "Product Manager", net: "Net 2 yrs", best: "Best by 01/2022 - 12/2023", serving: "Per 2 years of work", facts: [["Teams", "2"], ["People in them", "~20"], ["NSM", "+15%"], ["WAU", "+10%"], ["ARPU", "+10 pp"]], text: "Led two product teams, about 20 people, and owned the strategy for core services. NSM +15% after redesigning the homework flow, WAU +10% and higher course sales after updating the course page, ARPU +10 pp from a new math learning format." },
+      { color: "#2B6CD6", fs: "4.4cqw", name: "VK", sub: "", role: "Product Manager", net: "Net 1 yr 3 mos", best: "Best by 12/2020 - 01/2022", serving: "Per 1 yr 3 mos", facts: [["New products", "2"], ["Visit → signup", "+20%"], ["Visit → buy", "+10 pp"], ["Completion", "+5 pp"], ["Homework SLA", "+15%"]], text: "Platform and Content Cluster. Launched 2 educational products from hypothesis to market and hit the half-year EBITDA OKR. Visit-to-signup conversion +20%, visit-to-purchase +10 pp, completion rate +5 pp, homework SLA +15%." },
+      { color: "#1E9E58", fs: "3.4cqw", name: "Avito", sub: "", role: "Project Manager", net: "Net 1 yr 5 mos", best: "Best by 07/2019 - 11/2020", serving: "Per 1 yr 5 mos", facts: [["Classifieds analyzed", "20"], ["Listing CTR", "up"], ["Line revenue", "up"], ["Sales geo model", "1"]], text: "Real Estate. A gamification campaign to raise listing CTR and quality, a geo model for how the sales team works with clients, and a new segment that grew the line's revenue." },
+      { color: "#C23B3B", fs: "2.5cqw", name: "MAXIMUM", sub: "Education", role: "Market Analyst", net: "Net 1 yr 4 mos", best: "Best by 11/2018 - 02/2020", serving: "Per 1 yr 4 mos", facts: [["Markets", "5 countries"], ["Events", "200+"], ["Event to visit", "+10%"], ["Public talks", "30+"], ["Lecturers", "5"]], text: "Researched EdTech markets in 5 countries and prepared the strategy for entering LATAM and Asia. Before that, 200+ lead-gen events and 30+ public talks on education innovation." },
     ],
     skills: ["Product Management", "Retention and subscriptions", "A/B testing", "Discovery and interviews", "Unit economics", "SQL", "Amplitude", "Python", "Figma", "LLM and AI pipelines", "Team management", "English C1"],
     education: [
@@ -601,10 +630,31 @@ function render() {
   $$("[data-show]").forEach(el => { el.textContent = CONTENT.links[el.dataset.show].label; });
   $$('.magnet[data-action^="link:"]').forEach(el => { el.hidden = !linkUrl(el.dataset.action.slice(5)); });
   $$("[data-lang]").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === lang));
-  $("#jobs").innerHTML = t.jobs.map(j => `<div class="job"><div class="row"><b>${esc(j.title)}</b><time>${esc(j.years)}</time></div><p>${esc(j.text)}</p></div>`).join("");
+  $("#shelves").innerHTML = t.jobs.map(j => `<article class="bay"><div class="bay-in" style="--c:${j.color};--fs:${j.fs}">
+    <div class="gable g1"></div><div class="gable g2"></div>
+    <div class="print front"><div class="block"><b>${esc(j.name)}</b>${j.sub ? `<i>${esc(j.sub)}</i>` : ""}</div><div class="low"><b>${esc(j.role)}</b><span>${esc(j.net)}<br>${esc(j.best)}</span></div></div>
+    <div class="print facts"><div class="nf"><h4>${esc(t.ui.factsTitle)}</h4><div class="srv">${esc(j.serving)}</div>${j.facts.map(([k, v]) => `<div class="fr"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join("")}<small>${esc(t.ui.factsFoot)}</small></div></div>
+    <p class="sr-only">${esc(j.text)}</p>
+  </div></article>`).join("");
   $("#skills").innerHTML = t.skills.map(s => `<li>${esc(s)}</li>`).join("");
   $("#education").innerHTML = t.education.map(e => `<div class="job"><div class="row"><b>${esc(e.title)}</b><span>${esc(e.years)}</span></div>${e.sub ? `<p>${esc(e.sub)}</p>` : ""}</div>`).join("");
+  buildMini();
 }
+// В камере лежит копия содержимого: при открытии двери видно то же, что и после наезда камеры
+function buildMini() {
+  const cavity = $(".cavity"), mini = $("#rBody").cloneNode(true);
+  mini.removeAttribute("id");
+  $$("[id]", mini).forEach(el => el.removeAttribute("id"));
+  mini.className = "mini"; mini.inert = true;
+  cavity.replaceChildren(mini);
+  fitMini();
+}
+function fitMini() {
+  const mini = $(".mini"), cavity = $(".cavity");
+  mini.style.width = innerWidth + "px";
+  mini.style.transform = `scale(${cavity.offsetWidth / innerWidth})`;
+}
+addEventListener("resize", () => fitMini());
 function setLang(next) {
   lang = next;
   try { localStorage.setItem("lang", next); } catch {}
@@ -618,29 +668,56 @@ if (CONTENT.photo) { const p = $("#photo"); p.textContent = ""; p.style.backgrou
 // Холодильник
 const body = document.body, resume = $("#resume");
 let state = "closed";
+const scene = $("#scene");
+// Сцена и резюме двигаются одной камерой: камера холодильника становится экраном
+function camera() {
+  const was = scene.style.transform;
+  scene.style.transition = "none"; scene.style.transform = "";
+  const cavity = $(".cavity"), R = cavity.getBoundingClientRect(), S = scene.getBoundingClientRect();
+  const radius = parseFloat(getComputedStyle(cavity).borderTopLeftRadius) || 0;
+  scene.style.transform = was; void scene.offsetWidth; scene.style.transition = "";
+  const k = innerWidth / R.width;
+  return {
+    zoom: `translate(${-S.left - k * (R.left - S.left)}px, ${-S.top - k * (R.top - S.top)}px) scale(${k})`,
+    small: `translate(${R.left}px, ${R.top}px) scale(${1 / k})`,
+    height: R.height * k + "px", radius: `${radius * k}px ${radius * k}px 0 0`,
+  };
+}
 async function openFridge() {
   if (state !== "closed") return;
   state = "busy";
   body.classList.add("is-open");
   await wait(820);
-  body.classList.add("is-zoom");
-  resume.classList.remove("leaving");
+  const c = camera();
+  resume.style.transition = "none";
+  Object.assign(resume.style, { height: c.height, transform: c.small, borderRadius: c.radius });
   resume.classList.add("show");
-  await wait(950);
-  resume.scrollTop = 0;
+  void resume.offsetWidth;
+  resume.style.transition = "";
+  Object.assign(resume.style, { transform: "none", borderRadius: "0" });
+  scene.style.transform = c.zoom;
+  await wait(1050);
+  resume.style.height = "";
+  resume.classList.add("ready");
   resume.focus({ preventScroll: true });
   state = "open";
 }
 async function closeFridge() {
   if (state !== "open") return;
   state = "busy";
-  resume.classList.add("leaving");
+  if (resume.scrollTop > 0) {
+    resume.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    await wait(650);
+    resume.scrollTop = 0;
+  }
+  const c = camera();
+  resume.classList.remove("ready");
+  Object.assign(resume.style, { height: c.height, transform: c.small, borderRadius: c.radius });
+  scene.style.transform = "";
+  await wait(1050);
   resume.classList.remove("show");
-  await wait(250);
-  body.classList.remove("is-zoom");
-  await wait(850);
   body.classList.remove("is-open");
-  await wait(900);
+  await wait(950);
   state = "closed";
   $("#handle").focus({ preventScroll: true });
 }
