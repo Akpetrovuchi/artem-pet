@@ -41,7 +41,7 @@ button { font: inherit; color: inherit; }
 /* Сцена: фото кухни, масштаб считается от ширины кадра 1440 */
 .stage { position: relative; height: 100svh; overflow: hidden; container-type: size; }
 .cq {
-  --top: 0px;
+  --top: var(--head, 0px);
   --h: calc(100cqh - var(--top));
   --w: max(100cqw, calc(var(--h) * 16 / 9));
   --u: calc(var(--w) / 1440);
@@ -65,7 +65,7 @@ button { font: inherit; color: inherit; }
   width: calc(322 * var(--u)); height: calc(594 * var(--u));
   border-radius: calc(36 * var(--u)) calc(36 * var(--u)) calc(10 * var(--u)) calc(10 * var(--u));
   background: #DAD0BF; overflow: hidden;
-  opacity: 0; transition: opacity .2s;
+  opacity: 0; transition: opacity 0s .95s; /* гаснет, только когда дверь уже закрылась */
 }
 .glow {
   left: calc(690 * var(--u)); top: calc(40 * var(--u));
@@ -80,6 +80,7 @@ button { font: inherit; color: inherit; }
   opacity: 0; transition: opacity .9s .3s; pointer-events: none;
 }
 .is-open .cavity, .is-open .glow, .is-open .floor-light { opacity: 1; }
+.is-open .cavity { transition: none; }
 
 .door {
   left: calc(731 * var(--u)); top: calc(84 * var(--u));
@@ -209,13 +210,14 @@ button { font: inherit; color: inherit; }
 .wall-links a:hover { opacity: 1; text-decoration: underline; }
 
 @media (max-aspect-ratio: 31/20) {
-  .cq { --top: 150px; }
-  .stage::before { content: ""; position: absolute; inset: 0 0 auto; height: 220px; z-index: 1; background: linear-gradient(var(--wall) 68%, rgba(234, 226, 213, 0)); pointer-events: none; transition: opacity .4s; }
+  .cq { --top: var(--head, 214px); }
+  .stage::before { content: ""; position: absolute; inset: 0 0 auto; height: calc(var(--head, 214px) + 70px); z-index: 1; background: linear-gradient(var(--wall) calc(100% - 70px), rgba(234, 226, 213, 0)); pointer-events: none; transition: opacity .4s; }
   .is-open .stage::before { opacity: 0; }
-  .intro { top: 34px; translate: none; left: 24px; }
-  .intro h1 { font-size: 36px; margin-bottom: 12px; }
+  .intro { top: 34px; translate: none; left: 24px; width: min(560px, calc(100cqw - 48px)); }
+  .intro h1 { font-size: 36px; margin-bottom: 10px; }
   .intro-top { margin-bottom: 10px; }
-  .lead, .wall-links { display: none; }
+  .lead { font-size: 15px; line-height: 1.45; margin: 0 0 10px; max-width: none; }
+  .hint-more, .wall-links { display: none; }
 }
 
 /* Внутри холодильника: та же картинка, что в камере, только камера подъехала */
@@ -452,7 +454,7 @@ dialog.project[open] { animation: pop .35s var(--ease); }
     <div class="intro-top"><p class="eyebrow">artem.pet</p><div class="lang" role="group" data-i18n-aria="ariaLang"><button data-lang="ru">RU</button><button data-lang="en">EN</button></div></div>
     <h1 data-i18n="name"></h1>
     <p class="lead" data-text="lead"></p>
-    <p class="hint" data-i18n="hint"></p>
+    <p class="hint"><span><span data-i18n="hint"></span><span class="hint-more" data-i18n="hintMore"></span></span></p>
   </div>
 
   <nav class="wall-links cq" data-i18n-aria="contacts">
@@ -591,7 +593,7 @@ const CONTENT = {
   },
   ru: {
     ui: {
-      name: "Артём Петров", hint: "Открой холодильник: внутри резюме. Магниты кликаются", close: "← закрыть холодильник",
+      name: "Артём Петров", hint: "Открой холодильник: внутри резюме", hintMore: ". Магниты кликаются", close: "← закрыть холодильник",
       resume: "Резюме", experience: "Опыт", projects: "Проекты", skills: "Навыки", education: "Образование", contacts: "Контакты",
       pdfLink: "PDF", cvButton: "Скачать CV", back: "← назад", projMeta: "бот · макеты", role: "Моя роль", factsTitle: "Пищевая ценность", factsFoot: "* суточная норма не установлена", openBot: "Открыть бота", allMockups: "Все макеты в Figma",
       tipSmelo: "Smelo · проект", tipMax: "Max · проект", caption: "это я",
@@ -633,7 +635,7 @@ const CONTENT = {
   },
   en: {
     ui: {
-      name: "Artem Petrov", hint: "Open the fridge: the resume is inside. Magnets are clickable", close: "← close the fridge",
+      name: "Artem Petrov", hint: "Open the fridge: the resume is inside", hintMore: ". Magnets are clickable", close: "← close the fridge",
       resume: "Resume", experience: "Experience", projects: "Projects", skills: "Skills", education: "Education", contacts: "Contacts",
       pdfLink: "PDF", cvButton: "Download CV", back: "← back", projMeta: "bot · mockups", role: "My role", factsTitle: "Nutrition Facts", factsFoot: "* daily value not established", openBot: "Open the bot", allMockups: "All mockups in Figma",
       tipSmelo: "Smelo · project", tipMax: "Max · project", caption: "that's me",
@@ -717,6 +719,7 @@ function render() {
   $$("[id]", rest).forEach(el => el.removeAttribute("id"));
   $("#paperRest").replaceChildren(...rest.children);
   buildMini();
+  fitHead();
 }
 // В камере лежит копия содержимого: при открытии двери видно то же, что и после наезда камеры
 function buildMini() {
@@ -732,7 +735,14 @@ function fitMini() {
   mini.style.width = innerWidth + "px";
   mini.style.transform = `scale(${cavity.offsetWidth / innerWidth})`;
 }
-addEventListener("resize", () => fitMini());
+// На узких экранах текст стоит над сценой: сцена начинается там, где он заканчивается
+function fitHead() {
+  const intro = $(".intro"), stacked = matchMedia("(max-aspect-ratio: 31/20)").matches;
+  $("#stage").style.setProperty("--head", stacked ? intro.offsetTop + intro.offsetHeight + 12 + "px" : "0px");
+  fitMini();
+}
+addEventListener("resize", fitHead);
+document.fonts.ready.then(fitHead);
 function setLang(next) {
   lang = next;
   try { localStorage.setItem("lang", next); } catch {}
