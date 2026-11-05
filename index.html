@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Артём Петров</title>
+<meta name="description" content="Артём Петров, продакт-менеджер. Резюме и проекты: Smelo и Max.">
+<meta property="og:title" content="Артём Петров">
+<meta property="og:description" content="Открой холодильник: внутри резюме и проекты.">
+<meta property="og:image" content="https://artem.pet/assets/og.jpg">
+<meta property="og:url" content="https://artem.pet/">
+<meta name="theme-color" content="#EAE2D5">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='7' y='2' width='18' height='28' rx='5' fill='%2397A88F'/%3E%3Crect x='10' y='8' width='2.5' height='8' rx='1.2' fill='%23F4EEE3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat&family=JetBrains+Mono:wght@400;500&family=Onest:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="assets/kitchen.jpg">
+<style>
+:root {
+  --ink: #2A2620;
+  --muted: #8A7757;
+  --paper: #FAF5EC;
+  --wall: #EAE2D5;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  --hand: "Caveat", cursive;
+  --ease: cubic-bezier(.6, .05, .25, 1);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  background: var(--wall);
+  color: var(--ink);
+  font: 400 16px/1.5 "Onest", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+
+/* Сцена: фото кухни, масштаб считается от ширины кадра 1440 */
+.stage { position: relative; height: 100svh; overflow: hidden; container-type: size; }
+.cq {
+  --top: 0px;
+  --h: calc(100cqh - var(--top));
+  --w: max(100cqw, calc(var(--h) * 16 / 9));
+  --u: calc(var(--w) / 1440);
+  --left: clamp(calc(100cqw - var(--w)), calc(50cqw - var(--w) * 0.628), 0px);
+}
+.scene {
+  position: absolute;
+  left: var(--left);
+  top: calc(var(--top) + (var(--h) - var(--w) * 9 / 16) / 2);
+  width: var(--w);
+  height: calc(var(--w) * 9 / 16);
+  background: url(assets/kitchen.jpg) 0 0 / 100% 100% no-repeat;
+  perspective: calc(2600 * var(--u));
+  transform-origin: calc(905 * var(--u)) calc(395 * var(--u));
+  transition: transform .9s cubic-bezier(.55, 0, .7, .2);
+}
+.is-zoom .scene { transform: scale(5.5); }
+
+.cavity, .glow, .floor-light, .door { position: absolute; }
+.cavity {
+  left: calc(744 * var(--u)); top: calc(98 * var(--u));
+  width: calc(322 * var(--u)); height: calc(594 * var(--u));
+  border-radius: calc(36 * var(--u)) calc(36 * var(--u)) calc(10 * var(--u)) calc(10 * var(--u));
+  background: url(assets/cavity.jpg) center / cover;
+  opacity: 0; transition: opacity .2s;
+}
+.glow {
+  left: calc(690 * var(--u)); top: calc(40 * var(--u));
+  width: calc(430 * var(--u)); height: calc(720 * var(--u));
+  background: radial-gradient(closest-side, rgba(255, 238, 196, .55), rgba(255, 238, 196, 0));
+  opacity: 0; transition: opacity .9s .25s; pointer-events: none;
+}
+.floor-light {
+  left: calc(600 * var(--u)); top: calc(690 * var(--u));
+  width: calc(640 * var(--u)); height: calc(130 * var(--u));
+  background: radial-gradient(closest-side, rgba(255, 231, 176, .7), rgba(255, 231, 176, 0));
+  opacity: 0; transition: opacity .9s .3s; pointer-events: none;
+}
+.is-open .cavity, .is-open .glow, .is-open .floor-light { opacity: 1; }
+
+.door {
+  left: calc(731 * var(--u)); top: calc(84 * var(--u));
+  width: calc(347 * var(--u)); height: calc(620 * var(--u));
+  transform-style: preserve-3d;
+  transform-origin: 100% 50%;
+  transition: transform .95s var(--ease);
+}
+.is-open .door { transform: rotateY(104deg); }
+.door-face, .door-back {
+  position: absolute; inset: 0;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  border-radius: calc(12 * var(--u));
+}
+.door-face {
+  background: url(assets/kitchen.jpg) calc(-731 * var(--u)) calc(-84 * var(--u)) / var(--w) calc(var(--w) * 9 / 16) no-repeat;
+  cursor: pointer;
+}
+.door-back {
+  transform: rotateY(180deg);
+  background:
+    linear-gradient(180deg, transparent 0 calc(118 * var(--u)), rgba(255, 255, 255, .55) calc(118 * var(--u)) calc(158 * var(--u)), rgba(150, 160, 160, .55) calc(158 * var(--u)) calc(161 * var(--u)), transparent calc(161 * var(--u))) 0 0 / 100% calc(150 * var(--u)) repeat-y,
+    linear-gradient(90deg, #BFC2B8, #E3DFD5 22%, #EFEBE3 60%, #D7D2C7);
+  box-shadow: inset 0 0 0 calc(6 * var(--u)) #8E9E87, inset 0 0 0 calc(16 * var(--u)) #CFCBC1, inset calc(30 * var(--u)) 0 calc(40 * var(--u)) rgba(60, 50, 30, .15);
+}
+.handle-hit {
+  position: absolute; left: calc(30 * var(--u)); top: calc(140 * var(--u));
+  width: calc(36 * var(--u)); height: calc(190 * var(--u));
+  border: 0; padding: 0; background: none; cursor: pointer; border-radius: 99px;
+}
+.handle-hit::after {
+  content: ""; position: absolute; inset: calc(-6 * var(--u));
+  border-radius: 99px; border: 1.5px solid rgba(255, 255, 255, .9);
+  animation: ping 2.4s ease-out infinite;
+}
+@keyframes ping { 0% { opacity: .9; transform: scale(.9); } 70%, 100% { opacity: 0; transform: scale(1.25); } }
+
+/* Магниты */
+.magnet {
+  position: absolute; left: calc(var(--x) * var(--u)); top: calc(var(--y) * var(--u));
+  transform: translate(calc(var(--dx, 0) * var(--u)), calc(var(--dy, 0) * var(--u))) rotate(var(--r, 0deg));
+  border: 0; padding: 0; background: none; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none;
+  filter: drop-shadow(calc(-5 * var(--u)) calc(9 * var(--u)) calc(7 * var(--u)) rgba(35, 28, 15, .3)) drop-shadow(0 1px 1px rgba(30, 24, 12, .35));
+  transition: filter .2s, transform .2s;
+}
+.magnet:hover, .magnet:focus-visible { filter: drop-shadow(calc(-8 * var(--u)) calc(15 * var(--u)) calc(11 * var(--u)) rgba(35, 28, 15, .3)) drop-shadow(0 2px 2px rgba(30, 24, 12, .3)); outline: none; }
+.magnet.dragging { cursor: grabbing; transition: filter .2s; z-index: 5; }
+.magnet.wiggle { animation: wiggle .5s; }
+@keyframes wiggle { 25% { rotate: -4deg; } 75% { rotate: 4deg; } }
+.magnet .tip {
+  position: absolute; left: 50%; bottom: calc(100% + 8 * var(--u)); translate: -50% 4px;
+  white-space: nowrap; font: 400 12px/1 var(--mono); color: #F6F1E8; background: var(--ink);
+  padding: 6px 9px; border-radius: 6px; opacity: 0; pointer-events: none; transition: opacity .15s, translate .15s;
+  rotate: calc(-1 * var(--r, 0deg));
+}
+.magnet:hover .tip, .magnet:focus-visible .tip { opacity: 1; translate: -50% 0; }
+.is-open .magnet .tip { display: none; }
+
+.m-smelo { width: calc(108 * var(--u)); height: calc(108 * var(--u)); }
+.m-smelo .body {
+  position: absolute; inset: 0; border-radius: calc(26 * var(--u));
+  background: linear-gradient(135deg, #3A3640, #232027);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16), inset 0 calc(14 * var(--u)) calc(24 * var(--u)) rgba(255, 255, 255, .1);
+  display: grid; place-items: center;
+}
+.m-smelo svg { width: 65%; height: 65%; }
+.m-polaroid { width: calc(116 * var(--u)); height: calc(138 * var(--u)); }
+.m-polaroid .body { position: absolute; inset: 0; background: linear-gradient(#FFF, #F1EEE8); }
+.m-polaroid .photo {
+  position: absolute; left: calc(8 * var(--u)); top: calc(8 * var(--u)); right: calc(8 * var(--u)); height: calc(98 * var(--u));
+  background: linear-gradient(160deg, #9FA79A, #6F786D) center / cover;
+  display: grid; place-items: center; font: 400 calc(9 * var(--u))/1 var(--mono); color: rgba(255, 255, 255, .8);
+}
+.m-polaroid .caption { position: absolute; left: 0; right: 0; bottom: calc(6 * var(--u)); text-align: center; font: 400 calc(17 * var(--u))/1 var(--hand); color: #3B3A44; }
+.pin {
+  position: absolute; left: 50%; top: calc(-9 * var(--u)); width: calc(18 * var(--u)); height: calc(18 * var(--u)); margin-left: calc(-9 * var(--u));
+  border-radius: 50%; background: radial-gradient(circle at 35% 30%, #FFF, #C9CCD1 45%, #8A8F98);
+  box-shadow: calc(-2 * var(--u)) calc(3 * var(--u)) calc(3 * var(--u)) rgba(30, 24, 12, .35);
+}
+.pin.red { background: radial-gradient(circle at 35% 30%, #FF9B80, #E0573A 50%, #A3341F); }
+.m-note { width: calc(126 * var(--u)); height: calc(150 * var(--u)); }
+.m-note .body {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 calc(39 * var(--u)), rgba(159, 180, 214, .6) calc(39 * var(--u)) calc(40 * var(--u)), transparent calc(40 * var(--u)) calc(62 * var(--u))) 0 0 / 100% calc(22 * var(--u)),
+    linear-gradient(#FFFDF7, #F3EFE4);
+  background-position: 0 calc(18 * var(--u)), 0 0;
+  padding: calc(12 * var(--u)) calc(10 * var(--u));
+  font: 400 calc(18 * var(--u))/calc(22 * var(--u)) var(--hand); color: #2D3A6B; text-align: left;
+}
+.m-note s { text-decoration-thickness: 1px; }
+.m-max { width: calc(88 * var(--u)); height: calc(88 * var(--u)); }
+.m-max .body {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, .45), rgba(255, 255, 255, 0) 45%), linear-gradient(135deg, #E9B949, #C98E1E);
+  display: grid; place-items: center; font: 500 calc(26 * var(--u))/1 "Onest", sans-serif; letter-spacing: -.02em; color: #3A2A08;
+}
+.m-contact { width: calc(46 * var(--u)); height: calc(46 * var(--u)); }
+.m-contact .body {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #FFF, #EFEBE4 55%, #DDD7CC);
+  box-shadow: inset 0 0 0 calc(3 * var(--u)) rgba(255, 255, 255, .6), inset 0 0 0 calc(4 * var(--u)) rgba(0, 0, 0, .05);
+  display: grid; place-items: center; font: 500 calc(14 * var(--u))/1 var(--mono); color: var(--ink);
+}
+
+/* Текст на стене */
+.intro {
+  position: absolute; z-index: 2;
+  left: max(clamp(24px, 5vw, 80px), calc(var(--left) + 112 * var(--u)));
+  top: 50%; translate: 0 -58%;
+  width: min(calc(560 * var(--u)), calc(100cqw - 48px));
+  transition: opacity .4s;
+}
+.is-open .intro, .is-open .wall-links { opacity: 0; pointer-events: none; }
+.eyebrow { font: 400 max(12px, calc(14 * var(--u)))/1 var(--mono); letter-spacing: .02em; opacity: .6; margin: 0 0 calc(24 * var(--u)); }
+.intro h1 { font-weight: 500; font-size: max(34px, calc(76 * var(--u))); line-height: 1; letter-spacing: -.045em; margin: 0 0 calc(24 * var(--u)); }
+.lead { font-size: max(16px, calc(20 * var(--u))); line-height: 1.5; opacity: .8; margin: 0 0 calc(24 * var(--u)); max-width: calc(460 * var(--u)); }
+.hint { display: flex; align-items: center; gap: 10px; font: 400 max(11px, calc(13 * var(--u)))/1.4 var(--mono); opacity: .8; margin: 0; }
+.hint::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: #C8553D; animation: blink 2s infinite; }
+@keyframes blink { 50% { opacity: .3; } }
+.wall-links {
+  position: absolute; z-index: 2; left: max(clamp(24px, 5vw, 80px), calc(var(--left) + 112 * var(--u))); bottom: 5.5cqh;
+  display: flex; gap: calc(28 * var(--u)); font: 500 max(12px, calc(13 * var(--u)))/1 var(--mono);
+  transition: opacity .4s;
+}
+.wall-links a { text-decoration: none; opacity: .8; }
+.wall-links a:hover { opacity: 1; text-decoration: underline; }
+
+@media (max-aspect-ratio: 1/1) {
+  .cq { --top: 150px; }
+  .stage::before { content: ""; position: absolute; inset: 0 0 auto; height: 220px; z-index: 1; background: linear-gradient(var(--wall) 68%, rgba(234, 226, 213, 0)); pointer-events: none; transition: opacity .4s; }
+  .is-open .stage::before { opacity: 0; }
+  .intro { top: 34px; translate: none; left: 24px; }
+  .intro h1 { font-size: 36px; margin-bottom: 12px; }
+  .intro-top { margin-bottom: 10px; }
+  .lead, .wall-links { display: none; }
+}
+
+/* Полотно резюме */
+.resume {
+  position: fixed; inset: 0; z-index: 10; overflow-y: auto; overscroll-behavior: contain;
+  background: radial-gradient(ellipse 60% 320px at 50% 0, rgba(255, 233, 184, .7), rgba(255, 233, 184, 0)) no-repeat, var(--paper);
+  opacity: 0; visibility: hidden; transition: opacity .6s .35s, visibility 0s 1s;
+  outline: none;
+}
+.resume.show { opacity: 1; visibility: visible; transition: opacity .6s .35s, visibility 0s; }
+.resume.leaving { transition: opacity .35s, visibility 0s .35s; }
+.r-top { display: flex; justify-content: space-between; align-items: center; max-width: 1216px; margin: 0 auto; padding: 28px 24px; font: 400 13px/1 var(--mono); }
+.r-top button { background: none; border: 0; padding: 8px 0; cursor: pointer; opacity: .75; }
+.r-top button:hover { opacity: 1; }
+.r-top span { opacity: .5; }
+.r-wrap { max-width: 880px; margin: 0 auto; padding: 56px 24px 120px; }
+.r-wrap > * { opacity: 0; translate: 0 14px; transition: opacity .6s, translate .6s var(--ease); }
+.resume.show .r-wrap > * { opacity: 1; translate: none; }
+.resume.show .r-wrap > :nth-child(2) { transition-delay: .55s; }
+.resume.show .r-wrap > :nth-child(3) { transition-delay: .62s; }
+.resume.show .r-wrap > :nth-child(n+4) { transition-delay: .7s; }
+.label { font: 500 12px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.r-hero h2 { font-weight: 500; font-size: clamp(44px, 7vw, 72px); line-height: 1; letter-spacing: -.045em; margin: 18px 0 20px; }
+.r-hero p { font-size: clamp(18px, 2.2vw, 22px); line-height: 1.5; opacity: .82; max-width: 720px; margin: 0 0 28px; }
+.btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 12px 22px; border-radius: 999px;
+  border: 1px solid rgba(42, 38, 32, .3); background: none; text-decoration: none; font-weight: 500; cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+.btn:hover { border-color: var(--ink); }
+.btn.primary { background: var(--ink); border-color: var(--ink); color: #F6F1E8; }
+.btn.primary:hover { background: #45403A; }
+.shelf { height: 4px; margin: 56px 0; background: linear-gradient(#D4E0E4 0 3px, #9AABB2 3px); border-radius: 1px; opacity: .9; }
+.r-sec { display: grid; grid-template-columns: 170px 1fr; gap: 40px; }
+.r-sec h3 { font: 500 12px/1.6 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.job + .job { margin-top: 28px; }
+.row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+.row b { font-weight: 500; font-size: 20px; }
+.row time, .row span { font: 400 13px/1 var(--mono); color: var(--muted); white-space: nowrap; }
+.job p { margin: 6px 0 0; opacity: .72; max-width: 600px; }
+.projects { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.proj {
+  text-align: left; padding: 20px 22px; border-radius: 14px; border: 1px solid rgba(42, 38, 32, .1); background: rgba(255, 255, 255, .7);
+  cursor: pointer; transition: border-color .2s, translate .2s;
+}
+.proj:hover { border-color: rgba(42, 38, 32, .35); translate: 0 -2px; }
+.proj b { display: block; font-weight: 500; font-size: 20px; margin-bottom: 6px; }
+.proj span { display: block; opacity: .7; font-size: 15px; }
+.proj small { display: block; margin-top: 10px; font: 400 12px/1 var(--mono); color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0; padding: 0; }
+.chips li { padding: 7px 14px; border-radius: 999px; border: 1px solid rgba(42, 38, 32, .18); font-size: 15px; }
+.contacts { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: 18px; }
+.contacts span { display: inline-block; width: 96px; font: 400 13px/1 var(--mono); color: var(--muted); }
+.contacts a { text-decoration: none; border-bottom: 1px solid rgba(42, 38, 32, .25); }
+.contacts a:hover { border-color: var(--ink); }
+@media (max-width: 720px) {
+  .r-sec { grid-template-columns: 1fr; gap: 18px; }
+  .projects { grid-template-columns: 1fr; }
+  .shelf { margin: 44px 0; }
+  .row { flex-direction: column; gap: 4px; }
+}
+
+/* Карточка проекта */
+dialog.project {
+  width: min(1000px, calc(100vw - 32px)); max-height: calc(100svh - 32px); padding: 0; border: 0; border-radius: 20px;
+  background: var(--paper); color: var(--ink); box-shadow: 0 30px 80px rgba(20, 16, 10, .35); overflow: auto;
+}
+dialog.project::backdrop { background: rgba(26, 23, 18, .45); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+dialog.project[open] { animation: pop .35s var(--ease); }
+@keyframes pop { from { opacity: 0; translate: 0 16px; scale: .98; } }
+.p-inner { display: grid; grid-template-columns: auto 1fr; gap: 44px; padding: 40px 48px 40px 40px; position: relative; }
+.p-close { position: absolute; top: 16px; right: 16px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(42, 38, 32, .06); font-size: 24px; line-height: 1; cursor: pointer; }
+.p-close:hover { background: rgba(42, 38, 32, .12); }
+.shots { display: flex; gap: 16px; }
+.phone { width: 160px; height: 336px; border-radius: 30px; background: #16151A; padding: 6px; position: relative; flex: none; }
+.phone::before { content: ""; position: absolute; left: 58px; top: 14px; width: 44px; height: 12px; border-radius: 6px; background: #16151A; z-index: 1; }
+.phone .screen { width: 100%; height: 100%; border-radius: 25px; background: #EDEAF6 center top / cover no-repeat; display: grid; place-items: center; text-align: center; font: 400 10px/1.4 var(--mono); color: rgba(42, 38, 32, .5); }
+.p-info { display: flex; flex-direction: column; gap: 18px; align-self: center; }
+.p-head { display: flex; align-items: center; gap: 14px; }
+.p-head .logo { width: 52px; height: 52px; border-radius: 12px; display: grid; place-items: center; flex: none; }
+.p-head h2 { margin: 0; font-weight: 500; font-size: 40px; letter-spacing: -.04em; }
+.p-info p { margin: 0; font-size: 17px; line-height: 1.5; opacity: .82; max-width: 380px; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.tags span { padding: 5px 10px; border-radius: 999px; border: 1px solid rgba(42, 38, 32, .25); font: 400 12px/1.2 var(--mono); opacity: .8; }
+.p-role b { display: block; font-weight: 500; }
+@media (max-width: 860px) {
+  .p-inner { grid-template-columns: 1fr; padding: 56px 20px 24px; gap: 28px; }
+  .shots { overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -20px; padding: 0 20px 4px; }
+  .phone { scroll-snap-align: start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01s !important; transition-delay: 0s !important; }
+}
+[hidden] { display: none !important; }
+.intro-top { display: flex; align-items: center; gap: 14px; margin-bottom: calc(24 * var(--u)); }
+.intro-top .eyebrow { margin: 0; }
+.lang { display: inline-flex; padding: 2px; border-radius: 999px; border: 1px solid rgba(42, 38, 32, .22); }
+.lang button { border: 0; background: none; padding: 5px 10px; border-radius: 999px; font: 500 12px/1 var(--mono); cursor: pointer; opacity: .65; }
+.lang button:hover { opacity: 1; }
+.lang button[aria-pressed="true"] { background: var(--ink); color: #F6F1E8; opacity: 1; }
+.r-right { display: flex; align-items: center; gap: 14px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<main class="stage" id="stage">
+  <div class="scene cq" id="scene" aria-hidden="false">
+    <div class="glow"></div>
+    <div class="floor-light"></div>
+    <div class="cavity"></div>
+    <div class="door" id="door">
+      <div class="door-face" id="doorFace">
+        <button class="handle-hit" id="handle" data-i18n-aria="openFridge"></button>
+
+        <button class="magnet m-smelo" data-action="project:smelo" style="--x:196;--y:70;--r:-5deg" data-i18n-aria="ariaSmelo">
+          <span class="body"><svg viewBox="0 0 512 512" aria-hidden="true"><path d="M343.7 171A118 118 0 1 0 343.7 329" fill="none" stroke="#FBF8F3" stroke-width="66" stroke-linecap="round"/><path d="M190 366C164 392 132 410 98 424C112 398 122 366 128 326Z" fill="#FBF8F3" stroke="#FBF8F3" stroke-width="10" stroke-linejoin="round"/><circle cx="370" cy="250" r="30" fill="#B7A9F5"/></svg></span>
+          <span class="tip" data-i18n="tipSmelo"></span>
+        </button>
+
+        <button class="magnet m-polaroid" data-action="wiggle" style="--x:200;--y:214;--r:4deg" data-i18n-aria="ariaPhoto">
+          <span class="body"></span>
+          <span class="photo" id="photo">сюда фото</span>
+          <span class="caption" data-i18n="caption"></span>
+          <span class="pin"></span>
+        </button>
+
+        <button class="magnet m-note" data-action="wiggle" style="--x:52;--y:390;--r:-3deg" data-i18n-aria="ariaNote">
+          <span class="body" data-i18n-html="note"></span>
+          <span class="pin red"></span>
+        </button>
+
+        <button class="magnet m-max" data-action="project:max" style="--x:222;--y:392;--r:6deg" data-i18n-aria="ariaMax">
+          <span class="body">Max</span>
+          <span class="tip" data-i18n="tipMax"></span>
+        </button>
+
+        <button class="magnet m-contact" data-action="link:telegram" style="--x:196;--y:552;--r:-4deg" aria-label="Telegram">
+          <span class="body">tg</span><span class="tip">Telegram ↗</span>
+        </button>
+        <button class="magnet m-contact" data-action="link:linkedin" style="--x:246;--y:558;--r:3deg" aria-label="LinkedIn">
+          <span class="body">in</span><span class="tip">LinkedIn ↗</span>
+        </button>
+        <button class="magnet m-contact" data-action="link:pdf" style="--x:296;--y:552;--r:-2deg" data-i18n-aria="ariaPdf">
+          <span class="body">cv</span><span class="tip" data-i18n="pdfLink"></span>
+        </button>
+      </div>
+      <div class="door-back"></div>
+    </div>
+  </div>
+
+  <div class="intro cq">
+    <div class="intro-top"><p class="eyebrow">artem.pet</p><div class="lang" role="group" data-i18n-aria="ariaLang"><button data-lang="ru">RU</button><button data-lang="en">EN</button></div></div>
+    <h1 data-i18n="name"></h1>
+    <p class="lead" data-text="lead"></p>
+    <p class="hint" data-i18n="hint"></p>
+  </div>
+
+  <nav class="wall-links cq" data-i18n-aria="contacts">
+    <a data-link="pdf" download data-i18n="pdfLink"></a>
+    <a data-link="telegram" target="_blank" rel="noopener">Telegram ↗</a>
+    <a data-link="linkedin" target="_blank" rel="noopener">LinkedIn ↗</a>
+    <a data-link="hh" target="_blank" rel="noopener">hh.ru ↗</a>
+  </nav>
+</main>
+
+<section class="resume" id="resume" tabindex="-1" data-i18n-aria="resume">
+  <div class="r-top">
+    <button id="closeFridge" data-i18n="close"></button>
+    <div class="r-right"><span>artem.pet</span><div class="lang" role="group" data-i18n-aria="ariaLang"><button data-lang="ru">RU</button><button data-lang="en">EN</button></div></div>
+  </div>
+  <div class="r-wrap">
+    <header class="r-hero">
+      <p class="label" data-i18n="resume"></p>
+      <h2 data-i18n="name"></h2>
+      <p data-text="about"></p>
+      <div class="btns">
+        <a class="btn primary" data-link="pdf" download data-i18n="pdfButton"></a>
+        <a class="btn" data-link="hh" target="_blank" rel="noopener">hh.ru</a>
+        <a class="btn" data-link="linkedin" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn" data-link="telegram" target="_blank" rel="noopener">Telegram</a>
+      </div>
+    </header>
+
+    <div class="shelf"></div>
+    <section class="r-sec">
+      <h3 data-i18n="experience"></h3>
+      <div id="jobs"></div>
+    </section>
+
+    <div class="shelf"></div>
+    <section class="r-sec">
+      <h3 data-i18n="projects"></h3>
+      <div class="projects">
+        <button class="proj" data-action="project:smelo"><b>Smelo ↗</b><span data-text="smeloShort"></span><small data-i18n="projMeta"></small></button>
+        <button class="proj" data-action="project:max"><b>Max ↗</b><span data-text="maxShort"></span><small data-i18n="projMeta"></small></button>
+      </div>
+    </section>
+
+    <div class="shelf"></div>
+    <section class="r-sec">
+      <h3 data-i18n="skills"></h3>
+      <ul class="chips" id="skills"></ul>
+    </section>
+
+    <div class="shelf"></div>
+    <section class="r-sec">
+      <h3 data-i18n="education"></h3>
+      <div id="education"></div>
+    </section>
+
+    <div class="shelf"></div>
+    <section class="r-sec">
+      <h3 data-i18n="contacts"></h3>
+      <ul class="contacts">
+        <li><span>Telegram</span><a data-link="telegram" data-show="telegram" target="_blank" rel="noopener"></a></li>
+        <li><span>LinkedIn</span><a data-link="linkedin" data-show="linkedin" target="_blank" rel="noopener"></a></li>
+        <li><span>hh.ru</span><a data-link="hh" data-show="hh" target="_blank" rel="noopener"></a></li>
+      </ul>
+    </section>
+    <div class="shelf"></div>
+  </div>
+</section>
+
+<dialog class="project" id="project" aria-labelledby="pTitle">
+  <div class="p-inner">
+    <button class="p-close" id="pClose" data-i18n-aria="ariaClose">×</button>
+    <div class="shots" id="pShots"></div>
+    <div class="p-info">
+      <div class="p-head"><span class="logo" id="pLogo"></span><h2 id="pTitle"></h2></div>
+      <p id="pDesc"></p>
+      <div class="tags" id="pTags"></div>
+      <div class="p-role"><p class="label" data-i18n="role"></p><b id="pRole"></b></div>
+      <div class="btns">
+        <a class="btn primary" id="pBot" target="_blank" rel="noopener" data-i18n="openBot"></a>
+        <a class="btn" id="pFigma" target="_blank" rel="noopener" data-i18n="allMockups"></a>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+// Всё, что нужно поменять, лежит здесь.
+const CONTENT = {
+  links: {
+    telegram: { url: "https://t.me/artyhere", label: "@artyhere" },
+    linkedin: { url: "https://www.linkedin.com/in/artem-petrov-801a5115b/", label: "linkedin.com/in/artem-petrov" },
+    hh: { url: "", label: "" }, // пустая ссылка: все кнопки hh.ru скрываются
+    pdf: { url: { ru: "assets/artem-petrov-cv.pdf", en: "" } }, // английского PDF пока нет
+  },
+  photo: "assets/me.jpg",
+  projects: {
+    smelo: {
+      title: "Smelo",
+      logo: '<svg viewBox="0 0 512 512" width="52" height="52"><rect width="512" height="512" rx="120" fill="#2D2A32"/><path d="M343.7 171A118 118 0 1 0 343.7 329" fill="none" stroke="#FBF8F3" stroke-width="66" stroke-linecap="round"/><path d="M190 366C164 392 132 410 98 424C112 398 122 366 128 326Z" fill="#FBF8F3" stroke="#FBF8F3" stroke-width="10" stroke-linejoin="round"/><circle cx="370" cy="250" r="30" fill="#B7A9F5"/></svg>',
+      bot: "https://t.me/smelo_speak_bot",
+      figma: "https://www.figma.com/design/tzEed6CFfojVduGaVR6POY/Smelo-Mini-App",
+      shots: ["assets/shots/smelo-1.png", "assets/shots/smelo-2.png", "assets/shots/smelo-3.png"],
+    },
+    max: {
+      title: "Max",
+      logo: '<img src="assets/max-avatar.png" width="52" height="52" alt="" style="border-radius:50%">',
+      bot: "https://t.me/MaxEnglishPracticeBot",
+      figma: "https://www.figma.com/design/lv8MISBvTcsGW3DBJyavaJ",
+      shots: ["assets/shots/max-1.png", "assets/shots/max-2.png", "assets/shots/max-3.png"],
+    },
+  },
+  ru: {
+    ui: {
+      name: "Артём Петров", hint: "Открой холодильник: внутри резюме. Магниты кликаются", close: "← закрыть холодильник",
+      resume: "Резюме", experience: "Опыт", projects: "Проекты", skills: "Навыки", education: "Образование", contacts: "Контакты",
+      pdfLink: "Резюме PDF ↓", pdfButton: "Скачать PDF", projMeta: "бот · макеты", role: "Моя роль", openBot: "Открыть бота", allMockups: "Все макеты в Figma",
+      tipSmelo: "Smelo · проект", tipMax: "Max · проект", caption: "это я",
+      note: "Дела<br><s>запустить Smelo</s><br><s>запустить Max</s><br>найти команду",
+      openFridge: "Открыть холодильник: внутри резюме", ariaSmelo: "Проект Smelo", ariaMax: "Проект Max", ariaPhoto: "Фото", ariaNote: "Записка: запустить Smelo, запустить Max, найти команду", ariaPdf: "Скачать резюме PDF", ariaClose: "Закрыть", ariaLang: "Язык",
+    },
+    text: {
+      lead: "Product Lead, 7+ лет в B2C-продуктах. Retention, рост подписок, запуск с нуля и AI внутри продукта.",
+      about: "Product Lead с 7+ годами опыта в B2C web и мобильных продуктах (EdTech, AdTech). Специализируюсь на retention, росте подписочных приложений и запуске продуктов от 0 до 1: 100+ A/B-экспериментов, retention второй недели +5 п.п., рост юнита с 2% до 15% WAU. Встраиваю AI и LLM в продукт: автогенерация контента, персонализация, GenAI-функции. Управляю кросс-функциональными командами до 30 человек.",
+      smeloShort: "Тренажёр сложных разговоров в Telegram: манипуляции, аргументы, границы",
+      maxShort: "Разговорный английский в Telegram с персонажем Максом",
+    },
+    jobs: [
+      { years: "2024 - 2026", title: "Ewa languages · Product Lead", text: "Выстроил конвейер экспериментов: 80+ A/B-тестов за 2 года, retention второй недели +5 п.п. Вырастил юнит Words с 2% до 15% WAU за счёт интервального повторения и экосистемной стратегии. Внедрил LLM-пайплайн автогенерации упражнений и адаптации книг. Вёл команду разработки, 2 контент-продактов и 10 методистов, отвечал за Discovery и Delivery." },
+      { years: "2022 - 2023", title: "Uchi.ru · Product Manager", text: "Руководил двумя продуктовыми командами, около 20 человек, отвечал за стратегию core-сервисов. NSM +15% после редизайна флоу домашних заданий, WAU +10% и рост продаж курсов после обновления страницы курса, ARPU +10 п.п. за счёт нового формата обучения математике." },
+      { years: "2020 - 2022", title: "VK · Product Manager", text: "Platform и Content Cluster. Запустил 2 образовательных продукта от гипотезы до рынка и закрыл полугодовой OKR по EBITDA. Конверсия из визита в регистрацию +20%, в покупку +10 п.п., completion rate +5 п.п., SLA по домашним заданиям +15%." },
+      { years: "2019 - 2020", title: "Авито · Project Manager", text: "Недвижимость. Геймификационная кампания для роста CTR и качества объявлений, гео-модель для работы sales-команды с клиентами, подключение нового сегмента и рост выручки направления." },
+      { years: "2018 - 2020", title: "MAXIMUM Education · Market Analyst", text: "Исследовал EdTech-рынки 5 стран и готовил стратегию выхода в LATAM и Азию. До этого 200+ lead-gen мероприятий и 30+ публичных выступлений об образовательных инновациях." },
+    ],
+    skills: ["Product Management", "Retention и подписки", "A/B-тесты", "Discovery и интервью", "Юнит-экономика", "SQL", "Amplitude", "Python", "Figma", "LLM и AI-пайплайны", "Управление командами", "Английский C1"],
+    education: [
+      { title: "НИУ ВШЭ, бакалавр", sub: "International Business and Management", years: "2021" },
+      { title: "Gopractice: управление AI/ML-проектами", years: "2024" },
+      { title: "Gopractice: Product Growth Simulator", years: "2023" },
+      { title: "Gopractice: Data-driven product management", years: "2021" },
+    ],
+    projects: {
+      smelo: {
+        desc: "Telegram-бот и мини-приложение, где тренируют коммуникацию: распознавать манипуляции, аргументировать, держать границы и договариваться. Короткие уроки, разборы реальных ситуаций и AI-собеседник, который возражает.",
+        tags: ["Telegram-бот", "Mini App", "AI"],
+        role: "Идея, продукт, дизайн, разработка, запуск",
+      },
+      max: {
+        desc: "Telegram-бот для разговорного английского. Ежедневные уроки, переписка с персонажем Максом, который мягко поправляет ошибки, карточки слов с интервальным повторением, грамматика, аудирование и мини-приложение.",
+        tags: ["Telegram-бот", "Mini App", "AI", "EdTech"],
+        role: "Идея, продукт, дизайн, разработка",
+      },
+    },
+  },
+  en: {
+    ui: {
+      name: "Artem Petrov", hint: "Open the fridge: the resume is inside. Magnets are clickable", close: "← close the fridge",
+      resume: "Resume", experience: "Experience", projects: "Projects", skills: "Skills", education: "Education", contacts: "Contacts",
+      pdfLink: "Resume PDF ↓", pdfButton: "Download PDF", projMeta: "bot · mockups", role: "My role", openBot: "Open the bot", allMockups: "All mockups in Figma",
+      tipSmelo: "Smelo · project", tipMax: "Max · project", caption: "that's me",
+      note: "To do<br><s>launch Smelo</s><br><s>launch Max</s><br>find a team",
+      openFridge: "Open the fridge: the resume is inside", ariaSmelo: "Smelo project", ariaMax: "Max project", ariaPhoto: "Photo", ariaNote: "Note: launch Smelo, launch Max, find a team", ariaPdf: "Download resume PDF", ariaClose: "Close", ariaLang: "Language",
+    },
+    text: {
+      lead: "Product Lead with 7+ years in B2C products. Retention, subscription growth, zero-to-one launches and AI inside the product.",
+      about: "Product Lead with 7+ years of experience in B2C web and mobile products (EdTech, AdTech). I specialize in retention, growing subscription apps and taking products from 0 to 1: 100+ A/B experiments, second-week retention +5 pp, a unit grown from 2% to 15% of WAU. I build AI and LLM into products: content generation, personalization, GenAI features. I manage cross-functional teams of up to 30 people.",
+      smeloShort: "A Telegram trainer for hard conversations: manipulation, arguments, boundaries",
+      maxShort: "Conversational English in Telegram with a character named Max",
+    },
+    jobs: [
+      { years: "2024 - 2026", title: "Ewa languages · Product Lead", text: "Built a continuous experimentation pipeline: 80+ A/B tests in 2 years, second-week retention +5 pp. Grew the Words unit from 2% to 15% of WAU through spaced repetition and an ecosystem strategy. Shipped an LLM pipeline that generates exercises and adapts books. Led a development team, 2 content product managers and 10 methodologists, owning Discovery and Delivery." },
+      { years: "2022 - 2023", title: "Uchi.ru · Product Manager", text: "Led two product teams, about 20 people, and owned the strategy for core services. NSM +15% after redesigning the homework flow, WAU +10% and higher course sales after updating the course page, ARPU +10 pp from a new math learning format." },
+      { years: "2020 - 2022", title: "VK · Product Manager", text: "Platform and Content Cluster. Launched 2 educational products from hypothesis to market and hit the half-year EBITDA OKR. Visit-to-signup conversion +20%, visit-to-purchase +10 pp, completion rate +5 pp, homework SLA +15%." },
+      { years: "2019 - 2020", title: "Avito · Project Manager", text: "Real Estate. A gamification campaign to raise listing CTR and quality, a geo model for how the sales team works with clients, and a new segment that grew the line's revenue." },
+      { years: "2018 - 2020", title: "MAXIMUM Education · Market Analyst", text: "Researched EdTech markets in 5 countries and prepared the strategy for entering LATAM and Asia. Before that, 200+ lead-gen events and 30+ public talks on education innovation." },
+    ],
+    skills: ["Product Management", "Retention and subscriptions", "A/B testing", "Discovery and interviews", "Unit economics", "SQL", "Amplitude", "Python", "Figma", "LLM and AI pipelines", "Team management", "English C1"],
+    education: [
+      { title: "HSE University, Bachelor's", sub: "International Business and Management", years: "2021" },
+      { title: "Gopractice: AI/ML project management", years: "2024" },
+      { title: "Gopractice: Product Growth Simulator", years: "2023" },
+      { title: "Gopractice: Data-driven product management", years: "2021" },
+    ],
+    projects: {
+      smelo: {
+        desc: "A Telegram bot and mini app for training communication: spotting manipulation, making arguments, holding boundaries and negotiating. Short lessons, breakdowns of real situations and an AI partner that pushes back. The product is in Russian.",
+        tags: ["Telegram bot", "Mini App", "AI"],
+        role: "Idea, product, design, development, launch",
+      },
+      max: {
+        desc: "A Telegram bot for conversational English, made for Russian speakers. Daily lessons, chats with a character named Max who gently corrects mistakes, flashcards with spaced repetition, grammar, listening and a mini app.",
+        tags: ["Telegram bot", "Mini App", "AI", "EdTech"],
+        role: "Idea, product, design, development",
+      },
+    },
+  },
+};
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const wait = ms => new Promise(r => setTimeout(r, reduceMotion ? 0 : ms));
+
+// Язык: ссылка ?lang=en, потом прошлый выбор, потом язык браузера
+const LANGS = ["ru", "en"];
+function initialLang() {
+  const fromUrl = new URLSearchParams(location.search).get("lang");
+  if (LANGS.includes(fromUrl)) return fromUrl;
+  try { const saved = localStorage.getItem("lang"); if (LANGS.includes(saved)) return saved; } catch {}
+  return (navigator.languages || [navigator.language]).some(l => /^(ru|uk|be|kk)/i.test(l)) ? "ru" : "en";
+}
+let lang = initialLang();
+const linkUrl = id => { const u = CONTENT.links[id].url; return (typeof u === "object" ? u[lang] : u) || ""; };
+
+// Отрисовать тексты и ссылки. Элементы с пустой ссылкой скрываются.
+function render() {
+  const t = CONTENT[lang];
+  document.documentElement.lang = lang;
+  document.title = t.ui.name;
+  $$("[data-i18n]").forEach(el => { el.textContent = t.ui[el.dataset.i18n]; });
+  $$("[data-i18n-html]").forEach(el => { el.innerHTML = t.ui[el.dataset.i18nHtml]; });
+  $$("[data-i18n-aria]").forEach(el => { el.setAttribute("aria-label", t.ui[el.dataset.i18nAria]); });
+  $$("[data-text]").forEach(el => { el.textContent = t.text[el.dataset.text] || ""; });
+  $$("[data-link]").forEach(el => { const url = linkUrl(el.dataset.link); if (url) el.href = url; (el.closest("li") || el).hidden = !url; });
+  $$("[data-show]").forEach(el => { el.textContent = CONTENT.links[el.dataset.show].label; });
+  $$('.magnet[data-action^="link:"]').forEach(el => { el.hidden = !linkUrl(el.dataset.action.slice(5)); });
+  $$("[data-lang]").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === lang));
+  $("#jobs").innerHTML = t.jobs.map(j => `<div class="job"><div class="row"><b>${esc(j.title)}</b><time>${esc(j.years)}</time></div><p>${esc(j.text)}</p></div>`).join("");
+  $("#skills").innerHTML = t.skills.map(s => `<li>${esc(s)}</li>`).join("");
+  $("#education").innerHTML = t.education.map(e => `<div class="job"><div class="row"><b>${esc(e.title)}</b><span>${esc(e.years)}</span></div>${e.sub ? `<p>${esc(e.sub)}</p>` : ""}</div>`).join("");
+}
+function setLang(next) {
+  lang = next;
+  try { localStorage.setItem("lang", next); } catch {}
+  const url = new URL(location.href); url.searchParams.set("lang", next); history.replaceState(null, "", url);
+  render();
+}
+$$("[data-lang]").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang)));
+render();
+if (CONTENT.photo) { const p = $("#photo"); p.textContent = ""; p.style.backgroundImage = `url(${CONTENT.photo})`; }
+
+// Холодильник
+const body = document.body, resume = $("#resume");
+let state = "closed";
+async function openFridge() {
+  if (state !== "closed") return;
+  state = "busy";
+  body.classList.add("is-open");
+  await wait(820);
+  body.classList.add("is-zoom");
+  resume.classList.remove("leaving");
+  resume.classList.add("show");
+  await wait(950);
+  resume.scrollTop = 0;
+  resume.focus({ preventScroll: true });
+  state = "open";
+}
+async function closeFridge() {
+  if (state !== "open") return;
+  state = "busy";
+  resume.classList.add("leaving");
+  resume.classList.remove("show");
+  await wait(250);
+  body.classList.remove("is-zoom");
+  await wait(850);
+  body.classList.remove("is-open");
+  await wait(900);
+  state = "closed";
+  $("#handle").focus({ preventScroll: true });
+}
+$("#handle").addEventListener("click", openFridge);
+$("#doorFace").addEventListener("click", e => { if (e.target === e.currentTarget) openFridge(); });
+$("#closeFridge").addEventListener("click", closeFridge);
+
+// Карточка проекта
+const dlg = $("#project");
+function openProject(id) {
+  const p = { ...CONTENT.projects[id], ...CONTENT[lang].projects[id] };
+  $("#pTitle").textContent = p.title;
+  $("#pLogo").innerHTML = p.logo;
+  $("#pDesc").textContent = p.desc;
+  $("#pRole").textContent = p.role;
+  $("#pTags").innerHTML = p.tags.map(t => `<span>${esc(t)}</span>`).join("");
+  $("#pShots").innerHTML = p.shots.map(src => `<div class="phone"><div class="screen" style="background-image:url(${esc(src)})"></div></div>`).join("");
+  const bot = $("#pBot"), fig = $("#pFigma");
+  bot.hidden = !p.bot; bot.href = p.bot || "#";
+  fig.hidden = !p.figma; fig.href = p.figma || "#";
+  dlg.showModal();
+}
+$("#pClose").addEventListener("click", () => dlg.close());
+dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && state === "open" && !dlg.open) closeFridge(); });
+
+function act(action, el) {
+  const [kind, arg] = action.split(":");
+  if (kind === "project") openProject(arg);
+  else if (kind === "link") window.open(linkUrl(arg), "_blank", "noopener");
+  else if (kind === "wiggle") { el.classList.remove("wiggle"); void el.offsetWidth; el.classList.add("wiggle"); }
+}
+$$(".proj").forEach(el => el.addEventListener("click", () => act(el.dataset.action, el)));
+
+// Магниты можно таскать по двери. Короткий клик без сдвига срабатывает как нажатие.
+const door = $("#door");
+$$(".magnet").forEach(m => {
+  let sx, sy, ox, oy, moved = false, dragging = false;
+  m.addEventListener("pointerdown", e => {
+    if (state !== "closed") return;
+    dragging = true; moved = false; sx = e.clientX; sy = e.clientY;
+    ox = parseFloat(m.style.getPropertyValue("--dx") || 0); oy = parseFloat(m.style.getPropertyValue("--dy") || 0);
+    m.setPointerCapture(e.pointerId);
+  });
+  m.addEventListener("pointermove", e => {
+    if (!dragging) return;
+    const u = door.offsetWidth / 347;
+    const dx = (e.clientX - sx) / u, dy = (e.clientY - sy) / u;
+    if (!moved && Math.hypot(e.clientX - sx, e.clientY - sy) < 5) return;
+    moved = true; m.classList.add("dragging");
+    const x = parseFloat(m.style.getPropertyValue("--x")), y = parseFloat(m.style.getPropertyValue("--y"));
+    const w = m.offsetWidth / u, h = m.offsetHeight / u;
+    const nx = Math.min(Math.max(ox + dx, -x + 6), 347 - w - x - 6);
+    const ny = Math.min(Math.max(oy + dy, -y + 6), 620 - h - y - 6);
+    m.style.setProperty("--dx", nx); m.style.setProperty("--dy", ny);
+  });
+  const end = () => { if (!dragging) return; dragging = false; m.classList.remove("dragging"); };
+  m.addEventListener("pointerup", end);
+  m.addEventListener("pointercancel", end);
+  m.addEventListener("click", e => { e.stopPropagation(); if (moved) { moved = false; return; } act(m.dataset.action, m); });
+});
+</script>
+</body>
+</html>
