@@ -161,7 +161,7 @@ button { font: inherit; color: inherit; }
   box-shadow: calc(-2 * var(--u)) calc(3 * var(--u)) calc(3 * var(--u)) rgba(30, 24, 12, .35);
 }
 .pin.red { background: radial-gradient(circle at 35% 30%, #FF9B80, #E0573A 50%, #A3341F); }
-.m-note { width: calc(126 * var(--u)); height: calc(150 * var(--u)); }
+.m-note { width: calc(126 * var(--u)); height: calc(172 * var(--u)); }
 .m-note .body {
   position: absolute; inset: 0;
   background:
@@ -268,9 +268,10 @@ button { font: inherit; color: inherit; }
 .nf { flex: 1; display: flex; flex-direction: column; border: .17cqw solid; padding: .6cqw .8cqw; }
 .nf h4 { font: 800 1.22cqw/1.1 "Onest", sans-serif; letter-spacing: -.02em; margin: 0; white-space: nowrap; }
 .nf .srv { font: 500 .82cqw/1.3 "Onest", sans-serif; padding: .2cqw 0 .4cqw; border-bottom: .45cqw solid; }
-.nf p { margin: 0; padding: .5cqw 0; border-bottom: .06cqw solid; font: 400 .82cqw/1.3 "Onest", sans-serif; }
-.nf p:last-of-type { border-bottom: 0; }
-.nf p b { font-weight: 800; }
+.nf ul { margin: .5cqw 0 0; padding: 0; list-style: none; }
+.nf li { position: relative; padding-left: .8cqw; margin-bottom: .5cqw; font: 400 .82cqw/1.3 "Onest", sans-serif; }
+.nf li::before { content: "•"; position: absolute; left: 0; font-weight: 800; }
+.nf li b { font-weight: 800; }
 .nf small { margin-top: auto; font: 500 .62cqw/1.25 var(--mono); }
 .m-head { display: none; }
 @media (max-width: 600px) {
@@ -283,7 +284,7 @@ button { font: inherit; color: inherit; }
   .nf { border: 0; padding: .5cqw .9cqw; }
   .nf h4 { font-size: 1.2cqw; }
   .nf .srv, .nf small { display: none; }
-  .nf p { font-size: .8cqw; padding: .38cqw 0; }
+  .nf li { font-size: .8cqw; margin-bottom: .4cqw; }
   .nf h4 { padding-bottom: .3cqw; border-bottom: .4cqw solid; }
 }
 .r-wrap { max-width: 880px; margin: 0 auto; padding: 72px 24px 120px; }
@@ -315,6 +316,10 @@ button { font: inherit; color: inherit; }
 .row b { font-weight: 500; font-size: 20px; }
 .row time, .row span { font: 400 13px/1 var(--mono); color: var(--muted); white-space: nowrap; }
 .job p { margin: 6px 0 0; opacity: .72; max-width: 600px; }
+.ach { margin: 8px 0 0; padding-left: 18px; max-width: 640px; }
+.ach li { margin-bottom: 5px; line-height: 1.45; }
+.ach li::marker { color: var(--muted); }
+.ach b { font-weight: 500; }
 .projects { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .proj {
   text-align: left; padding: 20px 22px; border-radius: 14px; border: 1px solid rgba(42, 38, 32, .1); background: rgba(255, 255, 255, .7);
@@ -379,21 +384,23 @@ dialog.project[open] { animation: pop .35s var(--ease); }
 .r-right { display: flex; align-items: center; gap: 14px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @media print {
-  @page { size: A4; margin: 13mm 15mm; }
+  @page { size: A4; margin: 10mm 14mm; }
   html, body { height: auto; overflow: visible; background: #FFF; font-size: 12px; }
   .stage, .resume, dialog, .paper-bar, .btns, .proj small { display: none !important; }
   .paper { position: static; opacity: 1; visibility: visible; overflow: visible; background: none; }
   .p-wrap { max-width: none; padding: 0; }
   .p-hero h2 { font-size: 30px; margin: 6px 0 8px; }
   .p-hero > p:not(.label) { font-size: 12px; max-width: none; margin: 0; }
-  .shelf { height: 1px; margin: 12px 0; background: #BBB; }
+  .shelf { height: 1px; margin: 9px 0; background: #BBB; }
   .r-sec { grid-template-columns: 92px 1fr; gap: 14px; }
   .r-sec h3, .label { font-size: 9px; }
   .row b, .proj b { font-size: 13px; }
   .row time, .row span { font-size: 10px; }
-  .job + .job { margin-top: 9px; }
+  .job + .job { margin-top: 6px; }
   .job { break-inside: avoid; }
   .job p { max-width: none; margin-top: 2px; font-size: 11.5px; line-height: 1.4; }
+  .ach { max-width: none; margin-top: 3px; padding-left: 14px; }
+  .ach li { margin-bottom: 0; font-size: 11px; line-height: 1.34; }
   .projects { gap: 8px; }
   .proj { padding: 8px 10px; background: none; }
   .proj span { font-size: 11px; }
@@ -597,8 +604,8 @@ const CONTENT = {
       resume: "Резюме", experience: "Опыт", projects: "Проекты", skills: "Навыки", education: "Образование", contacts: "Контакты",
       pdfLink: "PDF", cvButton: "Скачать CV", back: "← назад", projMeta: "бот · макеты", role: "Моя роль", factsTitle: "Пищевая ценность", factsFoot: "* суточная норма не установлена", openBot: "Открыть бота", allMockups: "Все макеты в Figma",
       tipSmelo: "Smelo · проект", tipMax: "Max · проект", caption: "это я",
-      note: "Дела<br><s>внедрить ИИ-агентов</s><br><s>запустить свои проекты</s>",
-      openFridge: "Открыть холодильник: внутри резюме", ariaSmelo: "Проект Smelo", ariaMax: "Проект Max", ariaPhoto: "Фото", ariaNote: "Записка: внедрить ИИ-агентов и запустить свои проекты, оба пункта зачёркнуты", ariaPdf: "Открыть резюме", ariaClose: "Закрыть", ariaLang: "Язык",
+      note: "Дела<br><s>внедрить ИИ-агентов</s><br><s>запустить свои проекты</s><br>найти команду мечты",
+      openFridge: "Открыть холодильник: внутри резюме", ariaSmelo: "Проект Smelo", ariaMax: "Проект Max", ariaPhoto: "Фото", ariaNote: "Записка: внедрить ИИ-агентов и запустить свои проекты зачёркнуты, найти команду мечты ещё нет", ariaPdf: "Открыть резюме", ariaClose: "Закрыть", ariaLang: "Язык",
     },
     text: {
       lead: "Product Lead, 7+ лет в B2C-продуктах. Retention, рост подписок, запуск с нуля и AI внутри продукта.",
@@ -607,11 +614,11 @@ const CONTENT = {
       maxShort: "Разговорный английский в Telegram с персонажем Максом",
     },
     jobs: [
-      { years: "2024 - 2026", color: "#5B5BD6", fs: "4.4cqw", name: "Ewa", sub: "languages", role: "Product Lead", net: "Нетто 2 г 4 мес", best: "Годен: 01.2024 - 04.2026", serving: "На 2 года работы", ach: [["+5 п.п.", "retention второй недели: конвейер экспериментов, 80+ A/B-тестов за 2 года"], ["2% → 15% WAU", "вырос юнит Words на интервальном повторении и экосистемной стратегии"], ["LLM-пайплайн", "автогенерации упражнений и адаптации книг, стратегия AI-контента"], ["Команда:", "разработка, 2 контент-продакта, 10 методистов, полный цикл Discovery и Delivery"]], text: "Выстроил конвейер экспериментов: 80+ A/B-тестов за 2 года, retention второй недели +5 п.п. Вырастил юнит Words с 2% до 15% WAU за счёт интервального повторения и экосистемной стратегии. Внедрил LLM-пайплайн автогенерации упражнений и адаптации книг. Вёл команду разработки, 2 контент-продактов и 10 методистов, отвечал за Discovery и Delivery." },
-      { years: "2022 - 2023", color: "#D9701F", fs: "3.2cqw", name: "Uchi.ru", sub: "", role: "Product Manager", net: "Нетто 2 года", best: "Годен: 01.2022 - 12.2023", serving: "На 2 года работы", ach: [["~20 человек", "в двух продуктовых командах, стратегия core-сервисов"], ["NSM +15%", "за счёт редизайна флоу выдачи домашнего задания и новых сценариев"], ["WAU +10%", "и рост продаж курсов: новая страница курса, навигация, отображение прогресса"], ["ARPU +10 п.п.", "благодаря новому формату обучения математике"]], text: "Руководил двумя продуктовыми командами, около 20 человек, отвечал за стратегию core-сервисов. NSM +15% после редизайна флоу домашних заданий, WAU +10% и рост продаж курсов после обновления страницы курса, ARPU +10 п.п. за счёт нового формата обучения математике." },
-      { years: "2020 - 2022", color: "#2B6CD6", fs: "4.4cqw", name: "VK", sub: "", role: "Product Manager", net: "Нетто 1 г 3 мес", best: "Годен: 12.2020 - 01.2022", serving: "На 1 год 3 мес", ach: [["2 продукта", "от гипотезы до рынка, полугодовой OKR по EBITDA достигнут"], ["+20%", "конверсия из визита в регистрацию, +10 п.п. из визита в покупку"], ["Completion rate +5 п.п.,", "сессия +10%: новое пространство обучения"], ["SLA по ДЗ +15%", "и ниже затраты на найм: отдельный домен для преподавателей"]], text: "Platform и Content Cluster. Запустил 2 образовательных продукта от гипотезы до рынка и закрыл полугодовой OKR по EBITDA. Конверсия из визита в регистрацию +20%, в покупку +10 п.п., completion rate +5 п.п., SLA по домашним заданиям +15%." },
-      { years: "2019 - 2020", color: "#1E9E58", fs: "3.4cqw", name: "Авито", sub: "", role: "Project Manager", net: "Нетто 1 г 5 мес", best: "Годен: 07.2019 - 11.2020", serving: "На 1 год 5 мес", ach: [["Рост CTR", "объявлений: геймификационная кампания в недвижимости"], ["Гео-модель", "оптимизации работы sales-тимлидов с клиентами"], ["Рост выручки", "направления: новый сегмент и анализ структуры отдела продаж"], ["20 classifieds", "в сравнительном анализе на стажировке, стратегия вертикали «Услуги»"]], text: "Недвижимость. Геймификационная кампания для роста CTR и качества объявлений, гео-модель для работы sales-команды с клиентами, подключение нового сегмента и рост выручки направления." },
-      { years: "2018 - 2020", color: "#C23B3B", fs: "2.5cqw", name: "MAXIMUM", sub: "Education", role: "Market Analyst", net: "Нетто 1 г 4 мес", best: "Годен: 11.2018 - 02.2020", serving: "На 1 год 4 мес", ach: [["5 стран:", "анализ EdTech-рынков, стратегия выхода в LATAM и Азию"], ["M&A:", "варианты продуктовой стратегии для сделок и экспансии"], ["200+ мероприятий,", "конверсия из мероприятия в визит +10%"], ["30+ выступлений", "об образовательных инновациях, обучение 5 лекторов"]], text: "Исследовал EdTech-рынки 5 стран и готовил стратегию выхода в LATAM и Азию. До этого 200+ lead-gen мероприятий и 30+ публичных выступлений об образовательных инновациях." },
+      { years: "2024 - 2026", color: "#5B5BD6", fs: "4.4cqw", name: "Ewa", sub: "languages", role: "Product Lead", net: "Нетто 2 г 4 мес", best: "Годен: 01.2024 - 04.2026", serving: "На 2 года работы", ach: [["+5 п.п.", "retention второй недели: конвейер экспериментов, 80+ A/B-тестов за 2 года"], ["2% → 15% WAU", "вырос юнит Words на интервальном повторении и экосистемной стратегии"], ["LLM-пайплайн", "автогенерации упражнений и адаптации книг, стратегия AI-контента"], ["Команда:", "разработка, 2 контент-продакта, 10 методистов, полный цикл Discovery и Delivery"]] },
+      { years: "2022 - 2023", color: "#D9701F", fs: "3.2cqw", name: "Uchi.ru", sub: "", role: "Product Manager", net: "Нетто 2 года", best: "Годен: 01.2022 - 12.2023", serving: "На 2 года работы", ach: [["~20 человек", "в двух продуктовых командах, стратегия core-сервисов"], ["NSM +15%", "за счёт редизайна флоу выдачи домашнего задания и новых сценариев"], ["WAU +10%", "и рост продаж курсов: новая страница курса, навигация, отображение прогресса"], ["ARPU +10 п.п.", "благодаря новому формату обучения математике"]] },
+      { years: "2020 - 2022", color: "#2B6CD6", fs: "4.4cqw", name: "VK", sub: "", role: "Product Manager", net: "Нетто 1 г 3 мес", best: "Годен: 12.2020 - 01.2022", serving: "На 1 год 3 мес", ach: [["2 продукта", "от гипотезы до рынка, полугодовой OKR по EBITDA достигнут"], ["+20%", "конверсия из визита в регистрацию, +10 п.п. из визита в покупку"], ["Completion rate +5 п.п.,", "сессия +10%: новое пространство обучения"], ["SLA по ДЗ +15%", "и ниже затраты на найм: отдельный домен для преподавателей"]] },
+      { years: "2019 - 2020", color: "#1E9E58", fs: "3.4cqw", name: "Авито", sub: "", role: "Project Manager", net: "Нетто 1 г 5 мес", best: "Годен: 07.2019 - 11.2020", serving: "На 1 год 5 мес", ach: [["Рост CTR", "объявлений: геймификационная кампания в недвижимости"], ["Гео-модель", "оптимизации работы sales-тимлидов с клиентами"], ["Рост выручки", "направления: новый сегмент и анализ структуры отдела продаж"], ["20 classifieds", "в сравнительном анализе на стажировке, стратегия вертикали «Услуги»"]] },
+      { years: "2018 - 2020", color: "#C23B3B", fs: "2.5cqw", name: "MAXIMUM", sub: "Education", role: "Market Analyst", net: "Нетто 1 г 4 мес", best: "Годен: 11.2018 - 02.2020", serving: "На 1 год 4 мес", ach: [["5 стран:", "анализ EdTech-рынков, стратегия выхода в LATAM и Азию"], ["M&A:", "варианты продуктовой стратегии для сделок и экспансии"], ["200+ мероприятий,", "конверсия из мероприятия в визит +10%"], ["30+ выступлений", "об образовательных инновациях, обучение 5 лекторов"]] },
     ],
     skills: ["Product Management", "Retention и подписки", "A/B-тесты", "Discovery и интервью", "Юнит-экономика", "SQL", "Amplitude", "Python", "Figma", "LLM и AI-пайплайны", "Управление командами", "Английский C1"],
     education: [
@@ -639,8 +646,8 @@ const CONTENT = {
       resume: "Resume", experience: "Experience", projects: "Projects", skills: "Skills", education: "Education", contacts: "Contacts",
       pdfLink: "PDF", cvButton: "Download CV", back: "← back", projMeta: "bot · mockups", role: "My role", factsTitle: "Nutrition Facts", factsFoot: "* daily value not established", openBot: "Open the bot", allMockups: "All mockups in Figma",
       tipSmelo: "Smelo · project", tipMax: "Max · project", caption: "that's me",
-      note: "To do<br><s>roll out AI agents</s><br><s>launch my own projects</s>",
-      openFridge: "Open the fridge: the resume is inside", ariaSmelo: "Smelo project", ariaMax: "Max project", ariaPhoto: "Photo", ariaNote: "Note: roll out AI agents and launch my own projects, both crossed out", ariaPdf: "Open the resume", ariaClose: "Close", ariaLang: "Language",
+      note: "To do<br><s>roll out AI agents</s><br><s>launch my own projects</s><br>find my dream team",
+      openFridge: "Open the fridge: the resume is inside", ariaSmelo: "Smelo project", ariaMax: "Max project", ariaPhoto: "Photo", ariaNote: "Note: roll out AI agents and launch my own projects are crossed out, find my dream team is not", ariaPdf: "Open the resume", ariaClose: "Close", ariaLang: "Language",
     },
     text: {
       lead: "Product Lead with 7+ years in B2C products. Retention, subscription growth, zero-to-one launches and AI inside the product.",
@@ -649,11 +656,11 @@ const CONTENT = {
       maxShort: "Conversational English in Telegram with a character named Max",
     },
     jobs: [
-      { years: "2024 - 2026", color: "#5B5BD6", fs: "4.4cqw", name: "Ewa", sub: "languages", role: "Product Lead", net: "Net 2 yrs 4 mos", best: "Best by 01/2024 - 04/2026", serving: "Per 2 years of work", ach: [["+5 pp", "week 2 retention: a continuous experiment pipeline, 80+ A/B tests in 2 years"], ["2% → 15% of WAU", "Words unit growth through spaced repetition and an ecosystem strategy"], ["LLM pipeline", "for generating exercises and adapting books, plus the AI content strategy"], ["Team:", "development, 2 content PMs, 10 methodologists, full Discovery and Delivery cycle"]], text: "Built a continuous experimentation pipeline: 80+ A/B tests in 2 years, second-week retention +5 pp. Grew the Words unit from 2% to 15% of WAU through spaced repetition and an ecosystem strategy. Shipped an LLM pipeline that generates exercises and adapts books. Led a development team, 2 content product managers and 10 methodologists, owning Discovery and Delivery." },
-      { years: "2022 - 2023", color: "#D9701F", fs: "3.2cqw", name: "Uchi.ru", sub: "", role: "Product Manager", net: "Net 2 yrs", best: "Best by 01/2022 - 12/2023", serving: "Per 2 years of work", ach: [["~20 people", "in two product teams, strategy for core services"], ["NSM +15%", "from a redesigned homework flow and new user scenarios"], ["WAU +10%", "and higher course sales: new course page, navigation, progress display"], ["ARPU +10 pp", "from a new math learning format"]], text: "Led two product teams, about 20 people, and owned the strategy for core services. NSM +15% after redesigning the homework flow, WAU +10% and higher course sales after updating the course page, ARPU +10 pp from a new math learning format." },
-      { years: "2020 - 2022", color: "#2B6CD6", fs: "4.4cqw", name: "VK", sub: "", role: "Product Manager", net: "Net 1 yr 3 mos", best: "Best by 12/2020 - 01/2022", serving: "Per 1 yr 3 mos", ach: [["2 products", "from hypothesis to market, half-year EBITDA OKR met"], ["+20%", "visit-to-signup conversion, +10 pp visit-to-purchase"], ["Completion rate +5 pp,", "session length +10%: a new learning space"], ["Homework SLA +15%", "and lower hiring costs: a separate domain for teachers"]], text: "Platform and Content Cluster. Launched 2 educational products from hypothesis to market and hit the half-year EBITDA OKR. Visit-to-signup conversion +20%, visit-to-purchase +10 pp, completion rate +5 pp, homework SLA +15%." },
-      { years: "2019 - 2020", color: "#1E9E58", fs: "3.4cqw", name: "Avito", sub: "", role: "Project Manager", net: "Net 1 yr 5 mos", best: "Best by 07/2019 - 11/2020", serving: "Per 1 yr 5 mos", ach: [["Higher CTR", "on listings: a gamification campaign in real estate"], ["Geo model", "to optimize how sales team leads work with clients"], ["Revenue growth", "for the line: a new segment and a sales structure analysis"], ["20 classifieds", "in a comparative analysis during the internship, Services vertical strategy"]], text: "Real Estate. A gamification campaign to raise listing CTR and quality, a geo model for how the sales team works with clients, and a new segment that grew the line's revenue." },
-      { years: "2018 - 2020", color: "#C23B3B", fs: "2.5cqw", name: "MAXIMUM", sub: "Education", role: "Market Analyst", net: "Net 1 yr 4 mos", best: "Best by 11/2018 - 02/2020", serving: "Per 1 yr 4 mos", ach: [["5 countries:", "EdTech market research, strategy for entering LATAM and Asia"], ["M&A:", "product strategy options for deals and market expansion"], ["200+ events,", "event-to-visit conversion +10%"], ["30+ talks", "on education innovation, trained 5 lecturers"]], text: "Researched EdTech markets in 5 countries and prepared the strategy for entering LATAM and Asia. Before that, 200+ lead-gen events and 30+ public talks on education innovation." },
+      { years: "2024 - 2026", color: "#5B5BD6", fs: "4.4cqw", name: "Ewa", sub: "languages", role: "Product Lead", net: "Net 2 yrs 4 mos", best: "Best by 01/2024 - 04/2026", serving: "Per 2 years of work", ach: [["+5 pp", "week 2 retention: a continuous experiment pipeline, 80+ A/B tests in 2 years"], ["2% → 15% of WAU", "Words unit growth through spaced repetition and an ecosystem strategy"], ["LLM pipeline", "for generating exercises and adapting books, plus the AI content strategy"], ["Team:", "development, 2 content PMs, 10 methodologists, full Discovery and Delivery cycle"]] },
+      { years: "2022 - 2023", color: "#D9701F", fs: "3.2cqw", name: "Uchi.ru", sub: "", role: "Product Manager", net: "Net 2 yrs", best: "Best by 01/2022 - 12/2023", serving: "Per 2 years of work", ach: [["~20 people", "in two product teams, strategy for core services"], ["NSM +15%", "from a redesigned homework flow and new user scenarios"], ["WAU +10%", "and higher course sales: new course page, navigation, progress display"], ["ARPU +10 pp", "from a new math learning format"]] },
+      { years: "2020 - 2022", color: "#2B6CD6", fs: "4.4cqw", name: "VK", sub: "", role: "Product Manager", net: "Net 1 yr 3 mos", best: "Best by 12/2020 - 01/2022", serving: "Per 1 yr 3 mos", ach: [["2 products", "from hypothesis to market, half-year EBITDA OKR met"], ["+20%", "visit-to-signup conversion, +10 pp visit-to-purchase"], ["Completion rate +5 pp,", "session length +10%: a new learning space"], ["Homework SLA +15%", "and lower hiring costs: a separate domain for teachers"]] },
+      { years: "2019 - 2020", color: "#1E9E58", fs: "3.4cqw", name: "Avito", sub: "", role: "Project Manager", net: "Net 1 yr 5 mos", best: "Best by 07/2019 - 11/2020", serving: "Per 1 yr 5 mos", ach: [["Higher CTR", "on listings: a gamification campaign in real estate"], ["Geo model", "to optimize how sales team leads work with clients"], ["Revenue growth", "for the line: a new segment and a sales structure analysis"], ["20 classifieds", "in a comparative analysis during the internship, Services vertical strategy"]] },
+      { years: "2018 - 2020", color: "#C23B3B", fs: "2.5cqw", name: "MAXIMUM", sub: "Education", role: "Market Analyst", net: "Net 1 yr 4 mos", best: "Best by 11/2018 - 02/2020", serving: "Per 1 yr 4 mos", ach: [["5 countries:", "EdTech market research, strategy for entering LATAM and Asia"], ["M&A:", "product strategy options for deals and market expansion"], ["200+ events,", "event-to-visit conversion +10%"], ["30+ talks", "on education innovation, trained 5 lecturers"]] },
     ],
     skills: ["Product Management", "Retention and subscriptions", "A/B testing", "Discovery and interviews", "Unit economics", "SQL", "Amplitude", "Python", "Figma", "LLM and AI pipelines", "Team management", "English C1"],
     education: [
@@ -695,6 +702,7 @@ let lang = initialLang();
 const linkUrl = id => { const u = CONTENT.links[id].url; return (typeof u === "object" ? u[lang] : u) || ""; };
 
 // Отрисовать тексты и ссылки. Элементы с пустой ссылкой скрываются.
+const achItems = j => j.ach.map(([k, v]) => `<li><b>${esc(k)}</b> ${esc(v)}</li>`).join("");
 function render() {
   const t = CONTENT[lang];
   document.documentElement.lang = lang;
@@ -710,11 +718,11 @@ function render() {
   $("#shelves").innerHTML = t.jobs.map(j => `<article class="bay"><div class="bay-in" style="--c:${j.color};--fs:${j.fs}">
     <div class="gable g1"></div><div class="gable g2"></div>
     <div class="print front"><div class="block"><b>${esc(j.name)}</b>${j.sub ? `<i>${esc(j.sub)}</i>` : ""}</div><div class="low"><b>${esc(j.role)}</b><span>${esc(j.net)}<br>${esc(j.best)}</span></div></div>
-    <div class="print facts"><div class="m-head"><b>${esc(j.name)}</b><span>${esc(j.role)} · ${esc(j.net)}</span></div><div class="nf"><h4>${esc(t.ui.factsTitle)}</h4><div class="srv">${esc(j.serving)}</div>${j.ach.map(([k, v]) => `<p><b>${esc(k)}</b> ${esc(v)}</p>`).join("")}<small>${esc(t.ui.factsFoot)}</small></div></div>
+    <div class="print facts"><div class="m-head"><b>${esc(j.name)}</b><span>${esc(j.role)} · ${esc(j.net)}</span></div><div class="nf"><h4>${esc(t.ui.factsTitle)}</h4><div class="srv">${esc(j.serving)}</div><ul>${achItems(j)}</ul><small>${esc(t.ui.factsFoot)}</small></div></div>
   </div></article>`).join("");
   $("#skills").innerHTML = t.skills.map(s => `<li>${esc(s)}</li>`).join("");
   $("#education").innerHTML = t.education.map(e => `<div class="job"><div class="row"><b>${esc(e.title)}</b><span>${esc(e.years)}</span></div>${e.sub ? `<p>${esc(e.sub)}</p>` : ""}</div>`).join("");
-  $("#paperJobs").innerHTML = t.jobs.map(j => `<div class="job"><div class="row"><b>${esc(j.name)}${j.sub ? " " + esc(j.sub) : ""} · ${esc(j.role)}</b><time>${esc(j.years)}</time></div><p>${esc(j.text)}</p></div>`).join("");
+  $("#paperJobs").innerHTML = t.jobs.map(j => `<div class="job"><div class="row"><b>${esc(j.name)}${j.sub ? " " + esc(j.sub) : ""} · ${esc(j.role)}</b><time>${esc(j.years)}</time></div><ul class="ach">${achItems(j)}</ul></div>`).join("");
   const rest = $("#rBody .r-wrap").cloneNode(true);
   $$("[id]", rest).forEach(el => el.removeAttribute("id"));
   $("#paperRest").replaceChildren(...rest.children);
