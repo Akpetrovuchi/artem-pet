@@ -383,6 +383,27 @@ dialog.project[open] { animation: pop .35s var(--ease); }
   .phone { scroll-snap-align: start; }
 }
 
+dialog.about { width: min(1040px, calc(100vw - 32px)); }
+.a-inner { display: grid; grid-template-columns: 430px 1fr; gap: 44px; padding: 40px 48px 36px 40px; position: relative; }
+.pile { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-content: center; }
+.snap { margin: 0; padding: 8px 8px 0; background: #FFF; box-shadow: -3px 6px 14px rgba(35, 28, 15, .22), 0 1px 2px rgba(30, 24, 12, .3); }
+.snap:nth-child(1) { rotate: -2deg; } .snap:nth-child(2) { rotate: 1.6deg; translate: 0 8px; }
+.snap:nth-child(3) { rotate: 1.2deg; } .snap:nth-child(4) { rotate: -1.6deg; translate: 0 8px; }
+.snap img { display: block; width: 100%; aspect-ratio: 17 / 20; object-fit: cover; }
+.snap figcaption { font: 400 19px/1 var(--hand); text-align: center; color: #3B3A44; padding: 8px 0 10px; }
+.a-info { align-self: center; }
+.a-info h2 { margin: 6px 0 12px; font-weight: 500; font-size: 40px; letter-spacing: -.04em; line-height: 1.05; }
+.a-lead { margin: 0 0 18px; font-size: 17px; line-height: 1.5; opacity: .85; }
+.a-facts { margin: 0; display: grid; gap: 12px; }
+.a-facts div { display: grid; grid-template-columns: 92px 1fr; gap: 12px; padding-top: 12px; border-top: 1px solid rgba(42, 38, 32, .12); }
+.a-facts dt { font: 500 12px/1.5 var(--mono); letter-spacing: .04em; color: var(--muted); }
+.a-facts dd { margin: 0; font-size: 15px; line-height: 1.45; }
+@media (max-width: 860px) {
+  .a-inner { grid-template-columns: 1fr; padding: 56px 20px 24px; gap: 26px; }
+  .snap figcaption { font-size: 17px; }
+  .a-facts div { grid-template-columns: 1fr; gap: 2px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition-duration: .01s !important; transition-delay: 0s !important; }
 }
@@ -440,11 +461,12 @@ dialog.project[open] { animation: pop .35s var(--ease); }
           <span class="tip" data-i18n="tipSmelo"></span>
         </button>
 
-        <button class="magnet m-polaroid" data-action="wiggle" style="--x:200;--y:214;--r:4deg" data-i18n-aria="ariaPhoto">
+        <button class="magnet m-polaroid" data-action="about" style="--x:200;--y:214;--r:4deg" data-i18n-aria="ariaPhoto">
           <span class="body"></span>
           <span class="photo" id="photo">сюда фото</span>
           <span class="caption" data-i18n="caption"></span>
           <span class="pin"></span>
+          <span class="tip" data-i18n="tipMe"></span>
         </button>
 
         <button class="magnet m-note" data-action="wiggle" style="--x:52;--y:390;--r:-3deg" data-i18n-aria="ariaNote">
@@ -569,6 +591,19 @@ dialog.project[open] { animation: pop .35s var(--ease); }
   </div>
 </section>
 
+<dialog class="project about" id="about" aria-labelledby="aTitle">
+  <div class="a-inner">
+    <button class="p-close" id="aClose" data-i18n-aria="ariaClose">×</button>
+    <div class="pile" id="aPile"></div>
+    <div class="a-info">
+      <p class="label" data-i18n="name"></p>
+      <h2 id="aTitle" data-i18n="meTitle"></h2>
+      <p class="a-lead" id="aLead"></p>
+      <dl class="a-facts" id="aFacts"></dl>
+    </div>
+  </div>
+</dialog>
+
 <dialog class="project" id="project" aria-labelledby="pTitle">
   <div class="p-inner">
     <button class="p-close" id="pClose" data-i18n-aria="ariaClose">×</button>
@@ -616,13 +651,22 @@ const CONTENT = {
       pdfLink: "PDF", cvButton: "Скачать CV", back: "← назад", projMeta: "бот · макеты", role: "Моя роль", factsTitle: "Пищевая ценность", factsFoot: "* суточная норма не установлена", openBot: "Открыть бота",
       tipSmelo: "Smelo · проект", tipMax: "Max · проект", caption: "это я",
       note: "Дела<br><s>внедрить ИИ-агентов</s><br><s>запустить свои проекты</s><br>найти команду мечты",
-      openFridge: "Открыть холодильник: внутри резюме", ariaSmelo: "Проект Smelo", ariaMax: "Проект Max", ariaPhoto: "Фото", ariaNote: "Записка: внедрить ИИ-агентов и запустить свои проекты зачёркнуты, найти команду мечты ещё нет", ariaPdf: "Открыть резюме", ariaClose: "Закрыть", ariaLang: "Язык",
+      openFridge: "Открыть холодильник: внутри резюме", ariaSmelo: "Проект Smelo", ariaMax: "Проект Max", ariaPhoto: "Обо мне", tipMe: "Обо мне", meTitle: "Вне работы", ariaNote: "Записка: внедрить ИИ-агентов и запустить свои проекты зачёркнуты, найти команду мечты ещё нет", ariaPdf: "Открыть резюме", ariaClose: "Закрыть", ariaLang: "Язык",
     },
     text: {
       lead: "Product Lead & Product Builder, 7+ лет в B2C-продуктах. Retention, рост подписок, запуск с нуля и AI внутри продукта.",
       about: "Product Lead & Product Builder с 7+ годами опыта в B2C web и мобильных продуктах (EdTech, AdTech). Специализируюсь на retention, росте подписочных приложений и запуске продуктов от 0 до 1: 100+ A/B-экспериментов, retention второй недели +5 п.п., рост юнита с 2% до 15% WAU. Встраиваю AI и LLM в продукт: автогенерация контента, персонализация, GenAI-функции. Управляю кросс-функциональными командами до 30 человек.",
       smeloShort: "Тренажёр сложных разговоров в Telegram: манипуляции, аргументы, границы",
       maxShort: "Разговорный английский в Telegram с персонажем Максом",
+    },
+    me: {
+      lead: "Много изучаю мир и провожу время в спорте: люблю новые места и всё, чему можно научиться с нуля.",
+      facts: [
+        ["Мир", "Digital nomad: посетил 40+ стран и жил в разных местах, от Индонезии до Африки."],
+        ["Спорт", "Сёрфинг, вейксёрфинг, падел, велогонки, русский бильярд. Больше всего нравится сам путь: от первых попыток до уверенной техники."],
+        ["База", "Санкт-Петербург."],
+      ],
+      snaps: ["велогонка", "падел", "сёрфинг", "сверяю маршрут"],
     },
     jobs: [
       { url: "https://appewa.com", about: "EdTech · приложение для изучения языков, 60+ млн пользователей, 50+ сотрудников", years: "2024 - 2026", color: "#5B5BD6", fs: "4.4cqw", name: "Ewa", sub: "languages", role: "Product Lead", net: "Нетто 2 г 4 мес", best: "Годен: 01.2024 - 04.2026", serving: "На 2 года работы", ach: [["+5 п.п.", "retention второй недели: конвейер экспериментов, 80+ A/B-тестов за 2 года"], ["2% → 15% WAU", "вырос юнит Words на интервальном повторении и экосистемной стратегии"], ["LLM-пайплайн", "автогенерации упражнений и адаптации книг, стратегия AI-контента"], ["Команда:", "разработка, 2 контент-продакта, 10 методистов, полный цикл Discovery и Delivery"]] },
@@ -658,13 +702,22 @@ const CONTENT = {
       pdfLink: "PDF", cvButton: "Download CV", back: "← back", projMeta: "bot · mockups", role: "My role", factsTitle: "Nutrition Facts", factsFoot: "* daily value not established", openBot: "Open the bot",
       tipSmelo: "Smelo · project", tipMax: "Max · project", caption: "that's me",
       note: "To do<br><s>roll out AI agents</s><br><s>launch my own projects</s><br>find my dream team",
-      openFridge: "Open the fridge: the resume is inside", ariaSmelo: "Smelo project", ariaMax: "Max project", ariaPhoto: "Photo", ariaNote: "Note: roll out AI agents and launch my own projects are crossed out, find my dream team is not", ariaPdf: "Open the resume", ariaClose: "Close", ariaLang: "Language",
+      openFridge: "Open the fridge: the resume is inside", ariaSmelo: "Smelo project", ariaMax: "Max project", ariaPhoto: "About me", tipMe: "About me", meTitle: "Beyond work", ariaNote: "Note: roll out AI agents and launch my own projects are crossed out, find my dream team is not", ariaPdf: "Open the resume", ariaClose: "Close", ariaLang: "Language",
     },
     text: {
       lead: "Product Lead & Product Builder with 7+ years in B2C products. Retention, subscription growth, zero-to-one launches and AI inside the product.",
       about: "Product Lead & Product Builder with 7+ years of experience in B2C web and mobile products (EdTech, AdTech). I specialize in retention, growing subscription apps and taking products from 0 to 1: 100+ A/B experiments, second-week retention +5 pp, a unit grown from 2% to 15% of WAU. I build AI and LLM into products: content generation, personalization, GenAI features. I manage cross-functional teams of up to 30 people.",
       smeloShort: "A Telegram trainer for hard conversations: manipulation, arguments, boundaries",
       maxShort: "Conversational English in Telegram with a character named Max",
+    },
+    me: {
+      lead: "I spend a lot of time exploring the world and doing sports: I love new places and anything I can learn from scratch.",
+      facts: [
+        ["World", "Digital nomad: I've visited 40+ countries and lived in different places, from Indonesia to Africa."],
+        ["Sport", "Surfing, wakesurfing, padel, cycling races, Russian billiards. What I enjoy most is the learning curve: from first attempts to solid technique."],
+        ["Home base", "Saint Petersburg."],
+      ],
+      snaps: ["cycling race", "padel", "surfing", "checking the route"],
     },
     jobs: [
       { url: "https://appewa.com", about: "EdTech · language learning app, 60M+ users, 50+ employees", years: "2024 - 2026", color: "#5B5BD6", fs: "4.4cqw", name: "Ewa", sub: "languages", role: "Product Lead", net: "Net 2 yrs 4 mos", best: "Best by 01/2024 - 04/2026", serving: "Per 2 years of work", ach: [["+5 pp", "week 2 retention: a continuous experiment pipeline, 80+ A/B tests in 2 years"], ["2% → 15% of WAU", "Words unit growth through spaced repetition and an ecosystem strategy"], ["LLM pipeline", "for generating exercises and adapting books, plus the AI content strategy"], ["Team:", "development, 2 content PMs, 10 methodologists, full Discovery and Delivery cycle"]] },
@@ -733,6 +786,9 @@ function render() {
   </div></article>`).join("");
   $("#skills").innerHTML = t.skills.map(s => `<li>${esc(s)}</li>`).join("");
   $("#education").innerHTML = t.education.map(e => `<div class="job"><div class="row"><b>${esc(e.title)}</b><span>${esc(e.years)}</span></div>${e.sub ? `<p>${esc(e.sub)}</p>` : ""}</div>`).join("");
+  $("#aLead").textContent = t.me.lead;
+  $("#aFacts").innerHTML = t.me.facts.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("");
+  $("#aPile").innerHTML = ["cycling", "padel", "surf", "travel"].map((f, i) => `<figure class="snap"><img src="assets/about/${f}.jpg" alt="${esc(t.me.snaps[i])}" loading="lazy"><figcaption>${esc(t.me.snaps[i])}</figcaption></figure>`).join("");
   $("#paperJobs").innerHTML = t.jobs.map(j => `<div class="job"><div class="row"><b><a class="co-link" href="${esc(j.url)}" target="_blank" rel="noopener">${esc(j.name)}${j.sub ? " " + esc(j.sub) : ""} ↗</a> · ${esc(j.role)}</b><time>${esc(j.years)}</time></div><p class="co-line">${esc(j.about)}</p><ul class="ach">${achItems(j)}</ul></div>`).join("");
   const rest = $("#rBody .r-wrap").cloneNode(true);
   $$("[id]", rest).forEach(el => el.removeAttribute("id"));
@@ -848,8 +904,11 @@ function openProject(id) {
 }
 $("#pClose").addEventListener("click", () => dlg.close());
 dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+const aboutDlg = $("#about");
+$("#aClose").addEventListener("click", () => aboutDlg.close());
+aboutDlg.addEventListener("click", e => { if (e.target === aboutDlg) aboutDlg.close(); });
 document.addEventListener("keydown", e => {
-  if (e.key !== "Escape" || dlg.open) return;
+  if (e.key !== "Escape" || dlg.open || aboutDlg.open) return;
   if (paper.classList.contains("show")) closePaper();
   else if (state === "open") closeFridge();
 });
@@ -878,6 +937,7 @@ function act(action, el) {
   const [kind, arg] = action.split(":");
   if (kind === "project") openProject(arg);
   else if (kind === "paper") openPaper();
+  else if (kind === "about") aboutDlg.showModal();
   else if (kind === "link") window.open(linkUrl(arg), "_blank", "noopener");
   else if (kind === "wiggle") { el.classList.remove("wiggle"); void el.offsetWidth; el.classList.add("wiggle"); }
 }
