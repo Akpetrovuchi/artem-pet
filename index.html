@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Артём Петров</title>
-<meta name="description" content="Артём Петров, продакт-менеджер. Резюме и проекты: Smelo и Max.">
+<meta name="description" content="Артём Петров, Product Lead & Product Builder. Резюме и проекты: Smelo и Max.">
 <meta property="og:title" content="Артём Петров">
 <meta property="og:description" content="Открой холодильник: внутри резюме и проекты.">
 <meta property="og:image" content="https://artem.pet/assets/og.jpg">
@@ -566,7 +566,6 @@ dialog.project[open] { animation: pop .35s var(--ease); }
       <div class="p-role"><p class="label" data-i18n="role"></p><b id="pRole"></b></div>
       <div class="btns">
         <a class="btn primary" id="pBot" target="_blank" rel="noopener" data-i18n="openBot"></a>
-        <a class="btn" id="pFigma" target="_blank" rel="noopener" data-i18n="allMockups"></a>
       </div>
     </div>
   </div>
@@ -587,14 +586,12 @@ const CONTENT = {
       title: "Smelo",
       logo: '<svg viewBox="0 0 512 512" width="52" height="52"><rect width="512" height="512" rx="120" fill="#2D2A32"/><path d="M343.7 171A118 118 0 1 0 343.7 329" fill="none" stroke="#FBF8F3" stroke-width="66" stroke-linecap="round"/><path d="M190 366C164 392 132 410 98 424C112 398 122 366 128 326Z" fill="#FBF8F3" stroke="#FBF8F3" stroke-width="10" stroke-linejoin="round"/><circle cx="370" cy="250" r="30" fill="#B7A9F5"/></svg>',
       bot: "https://t.me/smelo_speak_bot",
-      figma: "https://www.figma.com/design/tzEed6CFfojVduGaVR6POY/Smelo-Mini-App",
       shots: ["assets/shots/smelo-1.png", "assets/shots/smelo-2.png", "assets/shots/smelo-3.png"],
     },
     max: {
       title: "Max",
       logo: '<img src="assets/max-avatar.png" width="52" height="52" alt="" style="border-radius:50%">',
       bot: "https://t.me/MaxEnglishPracticeBot",
-      figma: "https://www.figma.com/design/lv8MISBvTcsGW3DBJyavaJ",
       shots: ["assets/shots/max-1.png", "assets/shots/max-2.png", "assets/shots/max-3.png"],
     },
   },
@@ -602,14 +599,14 @@ const CONTENT = {
     ui: {
       name: "Артём Петров", hint: "Открой холодильник: внутри резюме", hintMore: ". Магниты кликаются", close: "← закрыть холодильник",
       resume: "Резюме", experience: "Опыт", projects: "Проекты", skills: "Навыки", education: "Образование", contacts: "Контакты",
-      pdfLink: "PDF", cvButton: "Скачать CV", back: "← назад", projMeta: "бот · макеты", role: "Моя роль", factsTitle: "Пищевая ценность", factsFoot: "* суточная норма не установлена", openBot: "Открыть бота", allMockups: "Все макеты в Figma",
+      pdfLink: "PDF", cvButton: "Скачать CV", back: "← назад", projMeta: "бот · макеты", role: "Моя роль", factsTitle: "Пищевая ценность", factsFoot: "* суточная норма не установлена", openBot: "Открыть бота",
       tipSmelo: "Smelo · проект", tipMax: "Max · проект", caption: "это я",
       note: "Дела<br><s>внедрить ИИ-агентов</s><br><s>запустить свои проекты</s><br>найти команду мечты",
       openFridge: "Открыть холодильник: внутри резюме", ariaSmelo: "Проект Smelo", ariaMax: "Проект Max", ariaPhoto: "Фото", ariaNote: "Записка: внедрить ИИ-агентов и запустить свои проекты зачёркнуты, найти команду мечты ещё нет", ariaPdf: "Открыть резюме", ariaClose: "Закрыть", ariaLang: "Язык",
     },
     text: {
-      lead: "Product Lead, 7+ лет в B2C-продуктах. Retention, рост подписок, запуск с нуля и AI внутри продукта.",
-      about: "Product Lead с 7+ годами опыта в B2C web и мобильных продуктах (EdTech, AdTech). Специализируюсь на retention, росте подписочных приложений и запуске продуктов от 0 до 1: 100+ A/B-экспериментов, retention второй недели +5 п.п., рост юнита с 2% до 15% WAU. Встраиваю AI и LLM в продукт: автогенерация контента, персонализация, GenAI-функции. Управляю кросс-функциональными командами до 30 человек.",
+      lead: "Product Lead & Product Builder, 7+ лет в B2C-продуктах. Retention, рост подписок, запуск с нуля и AI внутри продукта.",
+      about: "Product Lead & Product Builder с 7+ годами опыта в B2C web и мобильных продуктах (EdTech, AdTech). Специализируюсь на retention, росте подписочных приложений и запуске продуктов от 0 до 1: 100+ A/B-экспериментов, retention второй недели +5 п.п., рост юнита с 2% до 15% WAU. Встраиваю AI и LLM в продукт: автогенерация контента, персонализация, GenAI-функции. Управляю кросс-функциональными командами до 30 человек.",
       smeloShort: "Тренажёр сложных разговоров в Telegram: манипуляции, аргументы, границы",
       maxShort: "Разговорный английский в Telegram с персонажем Максом",
     },
@@ -644,14 +641,14 @@ const CONTENT = {
     ui: {
       name: "Artem Petrov", hint: "Open the fridge: the resume is inside", hintMore: ". Magnets are clickable", close: "← close the fridge",
       resume: "Resume", experience: "Experience", projects: "Projects", skills: "Skills", education: "Education", contacts: "Contacts",
-      pdfLink: "PDF", cvButton: "Download CV", back: "← back", projMeta: "bot · mockups", role: "My role", factsTitle: "Nutrition Facts", factsFoot: "* daily value not established", openBot: "Open the bot", allMockups: "All mockups in Figma",
+      pdfLink: "PDF", cvButton: "Download CV", back: "← back", projMeta: "bot · mockups", role: "My role", factsTitle: "Nutrition Facts", factsFoot: "* daily value not established", openBot: "Open the bot",
       tipSmelo: "Smelo · project", tipMax: "Max · project", caption: "that's me",
       note: "To do<br><s>roll out AI agents</s><br><s>launch my own projects</s><br>find my dream team",
       openFridge: "Open the fridge: the resume is inside", ariaSmelo: "Smelo project", ariaMax: "Max project", ariaPhoto: "Photo", ariaNote: "Note: roll out AI agents and launch my own projects are crossed out, find my dream team is not", ariaPdf: "Open the resume", ariaClose: "Close", ariaLang: "Language",
     },
     text: {
-      lead: "Product Lead with 7+ years in B2C products. Retention, subscription growth, zero-to-one launches and AI inside the product.",
-      about: "Product Lead with 7+ years of experience in B2C web and mobile products (EdTech, AdTech). I specialize in retention, growing subscription apps and taking products from 0 to 1: 100+ A/B experiments, second-week retention +5 pp, a unit grown from 2% to 15% of WAU. I build AI and LLM into products: content generation, personalization, GenAI features. I manage cross-functional teams of up to 30 people.",
+      lead: "Product Lead & Product Builder with 7+ years in B2C products. Retention, subscription growth, zero-to-one launches and AI inside the product.",
+      about: "Product Lead & Product Builder with 7+ years of experience in B2C web and mobile products (EdTech, AdTech). I specialize in retention, growing subscription apps and taking products from 0 to 1: 100+ A/B experiments, second-week retention +5 pp, a unit grown from 2% to 15% of WAU. I build AI and LLM into products: content generation, personalization, GenAI features. I manage cross-functional teams of up to 30 people.",
       smeloShort: "A Telegram trainer for hard conversations: manipulation, arguments, boundaries",
       maxShort: "Conversational English in Telegram with a character named Max",
     },
@@ -831,9 +828,8 @@ function openProject(id) {
   $("#pRole").textContent = p.role;
   $("#pTags").innerHTML = p.tags.map(t => `<span>${esc(t)}</span>`).join("");
   $("#pShots").innerHTML = p.shots.map(src => `<div class="phone"><div class="screen" style="background-image:url(${esc(src)})"></div></div>`).join("");
-  const bot = $("#pBot"), fig = $("#pFigma");
+  const bot = $("#pBot");
   bot.hidden = !p.bot; bot.href = p.bot || "#";
-  fig.hidden = !p.figma; fig.href = p.figma || "#";
   dlg.showModal();
 }
 $("#pClose").addEventListener("click", () => dlg.close());
